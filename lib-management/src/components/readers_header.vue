@@ -16,10 +16,10 @@
       <template #title>Reader Information</template>
     </el-sub-menu>
     <el-sub-menu index="4">
-      <template #title>Modify Password</template>
+      <template #title><RouterLink to="/reader/repassword">Modify Password</RouterLink></template>
     </el-sub-menu>
     <el-sub-menu index="5">
-      <template #title>${readercard.username}</template>
+      <template #title><RouterLink to="/reader/info">${readercard.username}</RouterLink></template>
     </el-sub-menu>
     <el-sub-menu index="6">
       <template #title>Log Out</template>
@@ -29,6 +29,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router';
 
 const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {

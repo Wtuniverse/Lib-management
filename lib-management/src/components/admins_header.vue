@@ -24,7 +24,7 @@
       <el-menu-item index="3-1">Lend List</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="4">
-      <template #title>Modify Password</template>
+      <template #title><RouterLink to="/admin/repassword">Modify Password</RouterLink></template>
     </el-sub-menu>
     <el-sub-menu index="5">
       <template #title>${admin.username}</template>
@@ -37,6 +37,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router';
 
 const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
