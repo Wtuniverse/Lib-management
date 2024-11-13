@@ -9,21 +9,21 @@
     <el-menu-item index="0">
       My Library
     </el-menu-item>
-    <el-menu-item index="1">
-      <template #title>Book Seaeching</template>
-    </el-menu-item>
-    <el-sub-menu index="3">
-      <template #title>Reader Information</template>
-    </el-sub-menu>
-    <el-sub-menu index="4">
-      <template #title><RouterLink to="/reader/repassword">Modify Password</RouterLink></template>
-    </el-sub-menu>
-    <el-sub-menu index="5">
-      <template #title><RouterLink to="/reader/info">${readercard.username}</RouterLink></template>
-    </el-sub-menu>
-    <el-sub-menu index="6">
+    <RouterLink to="/reader/book"><el-menu-item index="1">
+      <template #title>All Books</template>
+    </el-menu-item></RouterLink>
+    <RouterLink to="/reader/lendlist"><el-menu-item index="2">
+      <template #title>Lending List</template>
+    </el-menu-item></RouterLink>
+    <RouterLink to="/reader/repassword"><el-menu-item index="3">
+      <template #title>Modify Password</template>
+    </el-menu-item></RouterLink>
+    <RouterLink to="/reader/info"><el-menu-item index="4">
+      <template #title>${readercard.username}</template>
+    </el-menu-item></RouterLink>
+    <el-menu-item index="5">
       <template #title>Log Out</template>
-    </el-sub-menu>
+    </el-menu-item>
   </el-menu>
 </template>
 

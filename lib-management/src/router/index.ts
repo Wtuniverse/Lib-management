@@ -16,6 +16,14 @@ const router = createRouter({
     {
       path:'info',
       component: () => import('../components/readers_info.vue')
+    },
+      {
+        path:'lendlist',
+        component: () => import('../components/readers_lend_list.vue')
+      },
+    {
+      path:'book',
+      component: () => import('../components/readers_books.vue')
     }]
     },
     {
@@ -25,7 +33,28 @@ const router = createRouter({
       children:[{
         path: 'repassword',
         component: () => import('../components/repasswd.vue')
-      }]
+      },
+    {
+        path:'lendlist',
+        component: () => import('../components/admins_lend_list.vue')
+    },
+    {
+        path:'readers',
+        component: () => import('../components/admins_readers.vue')
+    },
+    {
+      path:'readeradd',
+      component: () => import('../components/admins_readers_add.vue')
+    },
+    {
+      path:'book',
+      component: () => import('../components/admins_books.vue')
+    },
+    {
+      path:'bookadd',
+      component: () => import('../components/admins_books_add.vue')
+    }
+  ]
     },
     {
       path: '/',

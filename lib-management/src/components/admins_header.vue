@@ -9,29 +9,29 @@
     <el-menu-item index="0">
       Library Management System
     </el-menu-item>
-    <el-menu-item index="1">
+    <el-sub-menu index="1">
       <template #title>Book Mangment</template>
-      <el-menu-item index="1-1">All Books</el-menu-item>
-      <el-menu-item index="1-2">Book Add</el-menu-item>
-    </el-menu-item>
+      <RouterLink to="/admin/book"><el-menu-item index="1-1">All Books</el-menu-item></RouterLink>
+      <RouterLink to="/admin/bookadd"><el-menu-item index="1-2">Book Add</el-menu-item></RouterLink>
+    </el-sub-menu>
     <el-sub-menu index="2">
       <template #title>Reader Managment</template>
-      <el-menu-item index="2-1">All Readers</el-menu-item>
-      <el-menu-item index="2-2">Reader Add</el-menu-item>
+      <RouterLink to="/admin/readers"><el-menu-item index="2-1">All Readers</el-menu-item></RouterLink>
+      <RouterLink to="/admin/readeradd"><el-menu-item index="2-2">Reader Add</el-menu-item></RouterLink>
     </el-sub-menu>
     <el-sub-menu index="3">
       <template #title>Lending Managment</template>
-      <el-menu-item index="3-1">Lend List</el-menu-item>
+      <RouterLink to="/admin/lendlist" ><el-menu-item index="3-1">Lend List</el-menu-item></RouterLink>
     </el-sub-menu>
-    <el-sub-menu index="4">
-      <template #title><RouterLink to="/admin/repassword">Modify Password</RouterLink></template>
-    </el-sub-menu>
-    <el-sub-menu index="5">
+    <RouterLink to="/admin/repassword"><el-menu-item index="4">
+      <template #title>Modify Password</template>
+    </el-menu-item></RouterLink>
+    <el-menu-item index="5">
       <template #title>${admin.username}</template>
-    </el-sub-menu>
-    <el-sub-menu index="6">
+    </el-menu-item>
+    <el-menu-item index="6">
       <template #title>Log Out</template>
-    </el-sub-menu>
+    </el-menu-item>
   </el-menu>
 </template>
 
