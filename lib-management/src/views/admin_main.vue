@@ -42,7 +42,6 @@ export default defineComponent({
 .nav {
   height: 60px; /* 导航栏高度 */
   display: flex; /* 使用flexbox布局 */
-  background-color: #333;
   align-items: center; /* 垂直居中 */
   justify-content: space-between;
   padding: 0 20px; /* 内边距 */
