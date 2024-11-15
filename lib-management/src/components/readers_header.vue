@@ -7,13 +7,13 @@
     @select="handleSelect"
   >
     <el-menu-item index="0">
-      My Library
+      Welcome To My Library System
     </el-menu-item>
     <RouterLink to="/reader/book"><el-menu-item index="1">
-      <template #title>All Books</template>
+      <template #title>Searching Books</template>
     </el-menu-item></RouterLink>
     <RouterLink to="/reader/lendlist"><el-menu-item index="2">
-      <template #title>Lending List</template>
+      <template #title>My Lending List</template>
     </el-menu-item></RouterLink>
     <RouterLink to="/reader/repassword"><el-menu-item index="3">
       <template #title>Modify Password</template>

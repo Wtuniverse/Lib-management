@@ -103,7 +103,6 @@ export default {
     };
 
 
-
     // 页面加载时获取图书数据
     onMounted(() => {
       fetchBooks();
@@ -115,9 +114,7 @@ export default {
       dialogVisible,
       selectedBook,
       searchBooks,
-      viewDetails,
-      editBook,
-      deleteBook
+      viewDetails
     };
   }
 };

@@ -36,18 +36,19 @@ export default defineComponent({
   align-items: center; /* 垂直居中 */
   min-height: 100vh; /* 确保内容区域至少填满视口 */
   text-align: center; /* 使文本水平居中 */
+  width: 1200px
 }
 
 .nav {
   height: 60px; /* 导航栏高度 */
-  background-color: #333; /* 背景颜色 */
   display: flex; /* 使用flexbox布局 */
+  background-color: #333;
   align-items: center; /* 垂直居中 */
+  justify-content: space-between;
   padding: 0 20px; /* 内边距 */
   position: fixed; /* 固定在页面顶部 */
   top: 0; /* 距离页面顶部为0 */
-  left: 0; /* 距离页面左边为0 */
-  width: 100%; /* 宽度100% */
+  width: 1200px;
   z-index: 1000; /* 确保导航栏位于页面其他内容之上 */
 }
 </style>
