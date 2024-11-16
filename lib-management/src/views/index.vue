@@ -2,10 +2,14 @@
   <div class="login-container">
     <div class="login-content">
       <el-card class="login-card">
-        <h2 class="title">Login</h2>
+        <h2 class="title">{{ isRegister ? 'Register' : 'Login' }}</h2>
         <el-form :model="form" ref="formRef" label-width="80px" class="login-form" @submit.native.prevent="handleSubmit">
           <el-form-item label="Username" prop="username" :rules="usernameRules">
             <el-input v-model="form.username" placeholder="Enter your username" />
+          </el-form-item>
+
+          <el-form-item v-if="isRegister" label="Email" prop="email" :rules="emailRules">
+            <el-input v-model="form.email" placeholder="Enter your email" />
           </el-form-item>
 
           <el-form-item label="Password" prop="password" :rules="passwordRules">
@@ -14,10 +18,13 @@
 
           <el-form-item>
             <el-button type="primary" native-type="submit" class="login-button" :loading="loading">
-              Login
+              {{ isRegister ? 'Register' : 'Login' }}
             </el-button>
           </el-form-item>
         </el-form>
+        <div class="toggle-form">
+          <span @click="toggleForm">{{ isRegister ? 'Already have an account? Login' : 'Don\'t have an account? Register' }}</span>
+        </div>
       </el-card>
     </div>
   </div>
@@ -37,33 +44,37 @@ export default {
     ElCard
   },
   setup() {
+    const isRegister = ref(false);
     const form = ref({
       username: '',
-      password: ''
+      password: '',
+      email: ''  // 添加 email 字段
     });
 
     const formRef = ref(null);
-    const loading = ref(false);  // 用于按钮的 loading 状态
+    const loading = ref(false);
 
-    // 更具描述性的错误信息
     const usernameRules = [
       { required: true, message: 'Please enter your username', trigger: 'blur' }
+    ];
+
+    const emailRules = [
+      { required: isRegister.value, message: 'Please enter your email', trigger: 'blur' },
+      { type: 'email', message: 'Please enter a valid email address', trigger: 'blur' }
     ];
 
     const passwordRules = [
       { required: true, message: 'Please enter your password', trigger: 'blur' }
     ];
 
-    // 提交表单
     const handleSubmit = () => {
       formRef.value.validate((valid) => {
         if (valid) {
-          loading.value = true;  // 开始加载状态
-          // 模拟请求处理（比如发送请求到后端）
+          loading.value = true;
           setTimeout(() => {
-            loading.value = false;  // 请求结束，关闭加载状态
-            alert('Login successful');
-            // 在这里处理登录逻辑，比如跳转到首页或其他操作
+            loading.value = false;
+            alert(isRegister.value ? 'Registration successful' : 'Login successful');
+            // 在这里处理登录或注册逻辑
           }, 1000);
         } else {
           console.log('Form validation failed.');
@@ -72,19 +83,35 @@ export default {
       });
     };
 
+    const toggleForm = () => {
+      isRegister.value = !isRegister.value;
+      form.value.email = ''; // 清空 email 字段
+    };
+
     return {
       form,
       formRef,
       usernameRules,
+      emailRules,
       passwordRules,
       handleSubmit,
-      loading
+      loading,
+      isRegister,
+      toggleForm
     };
   }
 };
 </script>
 
+
 <style scoped>
+
+/* 其他样式保持不变 */
+.toggle-form {
+  text-align: center;
+  margin-top: 20px;
+  cursor: pointer;
+}
 /* 设置整个页面的背景图片 */
 .login-container {
   display: flex;
