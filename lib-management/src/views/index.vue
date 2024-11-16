@@ -33,6 +33,7 @@
 <script>
 import { ref } from 'vue';
 import { ElForm, ElFormItem, ElInput, ElButton, ElCard } from 'element-plus';
+import axios from 'axios';
 
 export default {
   name: 'LoginPage',
@@ -48,9 +49,8 @@ export default {
     const form = ref({
       username: '',
       password: '',
-      email: ''  // 添加 email 字段
+      email: ''
     });
-
     const formRef = ref(null);
     const loading = ref(false);
 
@@ -67,15 +67,26 @@ export default {
       { required: true, message: 'Please enter your password', trigger: 'blur' }
     ];
 
-    const handleSubmit = () => {
-      formRef.value.validate((valid) => {
+    const handleSubmit = async () => {
+      formRef.value.validate(async (valid) => {
         if (valid) {
           loading.value = true;
-          setTimeout(() => {
+          try {
+            const response = await axios.post(`http://localhost:5000/${isRegister.value ? 'register' : 'login'}`, form.value);
+            const { token, isAdmin } = response.data;
+            localStorage.setItem('token', token);
+            if (isAdmin) {
+              // Redirect to admin dashboard
+              window.location.href = '/admin';
+            } else {
+              // Redirect to user homepage
+              window.location.href = '/reader';
+            }
+          } catch (error) {
+            alert('Error: ' + error.response.data);
+          } finally {
             loading.value = false;
-            alert(isRegister.value ? 'Registration successful' : 'Login successful');
-            // 在这里处理登录或注册逻辑
-          }, 1000);
+          }
         } else {
           console.log('Form validation failed.');
           return false;
@@ -85,7 +96,7 @@ export default {
 
     const toggleForm = () => {
       isRegister.value = !isRegister.value;
-      form.value.email = ''; // 清空 email 字段
+      form.value.email = '';
     };
 
     return {
