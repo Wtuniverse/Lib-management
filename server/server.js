@@ -16,7 +16,7 @@ async function run() {
     await client.connect();
     console.log('Connected to MongoDB');
 
-    const database = client.db('test');
+    const database = client.db('Lib');
     const usersCollection = database.collection('users');
 
     // 注册用户

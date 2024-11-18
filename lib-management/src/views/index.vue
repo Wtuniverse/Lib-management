@@ -72,16 +72,21 @@ export default {
         if (valid) {
           loading.value = true;
           try {
-            const response = await axios.post(`http://localhost:5000/${isRegister.value ? 'register' : 'login'}`, form.value);
-            const { token, isAdmin } = response.data;
+            const response = await axios.post(`http://localhost:5000/${isRegister.value ? 'register' : 'login'}`, {
+              username: form.value.username,
+              password: form.value.password,
+              email: isRegister.value ? form.value.email : undefined
+            });
+            const token = response.data.token;
             localStorage.setItem('token', token);
+            // Assuming isAdmin info needs to be handled; if necessary, adapt response structure
+            const isAdmin = response.data.isAdmin;
             if (isAdmin) {
-              // Redirect to admin dashboard
               window.location.href = '/admin';
             } else {
-              // Redirect to user homepage
               window.location.href = '/reader';
             }
+            // window.location.href = '/reader'; // Redirecting to user homepage after a successful login/register
           } catch (error) {
             alert('Error: ' + error.response.data);
           } finally {
@@ -114,27 +119,21 @@ export default {
 };
 </script>
 
-
 <style scoped>
-
-/* 其他样式保持不变 */
 .toggle-form {
   text-align: center;
   margin-top: 20px;
   cursor: pointer;
 }
-/* 设置整个页面的背景图片 */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   background: url('../assets/1706753915154946.jpg') no-repeat center center;
-  background-size: cover;  /* 背景图片覆盖整个页面 */
+  background-size: cover;
   width: 1200px;
 }
-
-/* 设置居中容器 */
 .login-content {
   display: flex;
   justify-content: center;
@@ -142,28 +141,21 @@ export default {
   width: 100%;
   height: 100%;
 }
-
-/* 设置登录卡片样式 */
 .login-card {
   width: 400px;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.8);  /* 半透明背景，确保背景图片不影响卡片内容 */
+  background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
 .title {
   text-align: center;
   font-size: 24px;
   margin-bottom: 20px;
 }
-
 .login-form .el-form-item {
   margin-bottom: 20px;
 }
-
 .login-button {
   width: 100%;
 }
 </style>
-
-
