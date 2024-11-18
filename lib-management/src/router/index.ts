@@ -15,15 +15,15 @@ const router = createRouter({
       },
     {
       path:'info',
-      component: () => import('../components/readers_info.vue')
+      component: () => import('../components/reader/readers_info.vue')
     },
       {
         path:'lendlist',
-        component: () => import('../components/readers_lend_list.vue')
+        component: () => import('../components/reader/readers_lend_list.vue')
       },
     {
       path:'book',
-      component: () => import('../components/readers_books.vue')
+      component: () => import('../components/reader/readers_books.vue')
     }]
     },
     {
@@ -36,23 +36,23 @@ const router = createRouter({
       },
     {
         path:'lendlist',
-        component: () => import('../components/admins_lend_list.vue')
+        component: () => import('../components/admin/admins_lend_list.vue')
     },
     {
         path:'readers',
-        component: () => import('../components/admins_readers.vue')
+        component: () => import('../components/reader/admins_readers.vue')
     },
     {
       path:'readeradd',
-      component: () => import('../components/admins_readers_add.vue')
+      component: () => import('../components/admin/admins_readers_add.vue')
     },
     {
       path:'book',
-      component: () => import('../components/admins_books.vue')
+      component: () => import('../components/admin/admins_books.vue')
     },
     {
       path:'bookadd',
-      component: () => import('../components/admins_books_add.vue')
+      component: () => import('../components/admin/admins_books_add.vue')
     }
   ]
     },

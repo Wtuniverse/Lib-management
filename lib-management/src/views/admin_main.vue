@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import admins_header from '../components/admins_header.vue';
+import admins_header from '../components/admin/admins_header.vue';
 import { RouterView } from 'vue-router';
 
 export default defineComponent({

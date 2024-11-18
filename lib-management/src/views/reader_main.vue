@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { RouterView } from 'vue-router';
-import readers_header from '../components/readers_header.vue';
+import readers_header from '../components/reader/readers_header.vue';
 
 export default {
   name: 'UserPage',
