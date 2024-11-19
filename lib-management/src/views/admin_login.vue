@@ -1,36 +1,29 @@
 <template>
-  <div class="login-container">
-    <div class="login-content">
-      <el-card class="login-card">
-        <h2 class="title">{{ isRegister ? 'Register' : 'Login' }}</h2>
-        <el-form :model="form" ref="formRef" label-width="80px" class="login-form" @submit.native.prevent="handleSubmit">
+  <div class="admin-container">
+    <div class="admin-content">
+      <el-card class="admin-card">
+        <h2 class="title">{{ isRegister ? 'Admin Register' : 'Admin Login' }}</h2>
+        <el-form :model="form" ref="formRef" label-width="80px" class="admin-form" @submit.native.prevent="handleSubmit">
           <el-form-item label="Username" prop="username" :rules="usernameRules">
-            <el-input v-model="form.username" placeholder="Enter your username" />
+            <el-input v-model="form.username" placeholder="Enter admin username" />
           </el-form-item>
 
-          <el-form-item v-if="isRegister" label="Email" prop="email" :rules="emailRules">
-            <el-input v-model="form.email" placeholder="Enter your email" />
+          <el-form-item v-if="isRegister" label="Security Code" prop="securityCode" :rules="securityCodeRules">
+            <el-input v-model="form.securityCode" placeholder="Enter security code" />
           </el-form-item>
 
           <el-form-item label="Password" prop="password" :rules="passwordRules">
-            <el-input type="password" v-model="form.password" placeholder="Enter your password" />
+            <el-input type="password" v-model="form.password" placeholder="Enter admin password" />
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" native-type="submit" class="login-button" :loading="loading">
+            <el-button type="primary" native-type="submit" class="admin-button" :loading="loading">
               {{ isRegister ? 'Register' : 'Login' }}
             </el-button>
           </el-form-item>
         </el-form>
-
-        <div class="toggle-form">
-          <span @click="toggleForm">
-            {{ isRegister ? 'Already have an account? Login' : 'Don\'t have an account? Register' }}
-          </span>
-        </div>
-         <!-- 添加跳转到管理员登录页面的超链接 -->
-         <div class="admin-link">
-          <a href="/admin_login">Admin Login</a> <!-- 这里的 href 路径根据你的路由设置进行调整 -->
+        <div class="toggle-form" @click="toggleForm">
+          {{ isRegister ? 'Already have an account? Login' : 'New admin? Register' }}
         </div>
       </el-card>
     </div>
@@ -41,18 +34,19 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import { useRouter } from 'vue-router'; // 引入 useRouter
+import { useRouter } from 'vue-router';
 
 export default {
-  name: 'Login',
+  name: 'AdminAuth',
   setup() {
     const formRef = ref(null);
     const loading = ref(false);
-    const isRegister = ref(false); // 控制当前是登录还是注册
+    const isRegister = ref(false);
+
     const form = ref({
       username: '',
       password: '',
-      email: '',
+      securityCode: '',
     });
 
     const usernameRules = [
@@ -63,33 +57,32 @@ export default {
       { required: true, message: 'Password is required', trigger: 'blur' }
     ];
 
-    const emailRules = [
-      { required: isRegister.value, message: 'Email is required', trigger: 'blur' },
-      { type: 'email', message: 'Invalid email', trigger: ['blur', 'change'] }
+    const securityCodeRules = [
+      { required: isRegister.value, message: 'Security Code is required', trigger: 'blur' },
+      { validator: (rule, value, callback) => {
+          if (isRegister.value && value !== '12345678') {
+            callback(new Error('Invalid security code.'));
+          } else {
+            callback();
+          }
+        }, trigger: 'blur' }
     ];
 
-    const router = useRouter(); // 获取 router 实例
-
-    const toggleForm = () => {
-      isRegister.value = !isRegister.value;
-      form.value.email = '';  // 切换时重置邮箱
-      formRef.value.resetFields(); // 重置表单
-    };
+    const router = useRouter();
 
     const handleSubmit = async () => {
       formRef.value.validate(async (valid) => {
         if (valid) {
           loading.value = true;
           try {
-            const userType = isRegister.value ? 'register' : 'login';
-            const response = await axios.post(`http://localhost:5000/${userType}`, {
+            const endpoint = isRegister.value ? 'http://localhost:5000/admin/register' : 'http://localhost:5000/admin/login';
+            const response = await axios.post(endpoint, {
               username: form.value.username,
               password: form.value.password,
-              email: isRegister.value ? form.value.email : undefined
+              ...(isRegister.value && { securityCode: form.value.securityCode }),
             });
             ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
-            // 登录或注册成功后的页面跳转
-            router.push({ name: 'reader' }); // 跳转到主页
+            router.push({ name: 'admin' });
           } catch (error) {
             ElMessage.error(error.response?.data || 'An error occurred');
           } finally {
@@ -99,16 +92,21 @@ export default {
       });
     };
 
+    const toggleForm = () => {
+      isRegister.value = !isRegister.value;
+      form.value.securityCode = '';  // Reset security code on toggle
+    };
+
     return {
       formRef,
       loading,
-      isRegister,
       form,
       usernameRules,
       passwordRules,
-      emailRules,
-      toggleForm,
+      securityCodeRules,
       handleSubmit,
+      toggleForm,
+      isRegister,
     };
   }
 };
@@ -120,7 +118,7 @@ export default {
   margin-top: 20px;
   cursor: pointer;
 }
-.login-container {
+.admin-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -129,14 +127,14 @@ export default {
   background-size: cover;
   width: 1200px;
 }
-.login-content {
+.admin-content {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
 }
-.login-card {
+.admin-card {
   width: 400px;
   padding: 30px;
   background: rgba(255, 255, 255, 0.8);
@@ -147,10 +145,10 @@ export default {
   font-size: 24px;
   margin-bottom: 20px;
 }
-.login-form .el-form-item {
+.admin-form .el-form-item {
   margin-bottom: 20px;
 }
-.login-button {
+.admin-button {
   width: 100%;
 }
 .admin-link {

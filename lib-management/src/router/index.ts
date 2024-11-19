@@ -40,7 +40,7 @@ const router = createRouter({
     },
     {
         path:'readers',
-        component: () => import('../components/reader/admins_readers.vue')
+        component: () => import('../components/admin/admins_readers.vue')
     },
     {
       path:'readeradd',
@@ -60,6 +60,11 @@ const router = createRouter({
       path: '/',
       name: 'index',
       component: () => import('../views/index.vue')
+    },
+    {
+      path: '/admin_login',
+      name: 'admin_login',
+      component: () => import('../views/admin_login.vue')
     }
   ]
 })

@@ -88,13 +88,9 @@ export default {
 
     // 模拟获取图书数据
     const fetchBooks = async () => {
-      // 假设从后端API获取图书列表
-      books.value = [
-        { bookId: 1, name: 'Java编程思想', author: 'Bruce Eckel', publish: '人民邮电出版社', isbn: '9787115331423', price: '99.00', number: '50' },
-        { bookId: 2, name: '深入理解计算机系统', author: 'Randal E. Bryant', publish: '清华大学出版社', isbn: '9787302513940', price: '129.00', number: '30' },
-        // 更多图书数据...
-      ];
-    };
+    const response = await fetch('http://localhost:5000/api/books');
+    books.value = await response.json();
+  };
 
     // 搜索图书
     const searchBooks = () => {
@@ -109,15 +105,40 @@ export default {
     };
 
     // 编辑图书
-    const editBook = (row) => {
-      alert(`Edit: ${row.name}`);
-    };
+    const editBook = async (row) => {
+    const updatedBook = { ...row };
+
+    // 假设您会弹出一个输入框来获得书籍的更新信息
+    const name = prompt("Edit Name:", updatedBook.name);
+    if (name) updatedBook.name = name; // 更新书名作为示例
+
+    const response = await fetch(`http://localhost:5000/api/books/${row.bookId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedBook)
+    });
+
+    if (response.ok) {
+        fetchBooks(); // 刷新图书列表
+    } else {
+        alert('Failed to update book');
+    }
+};
 
     // 删除图书
-    const deleteBook = (row) => {
-      alert(`Delete: ${row.name}`);
-      // 这里可以调用接口删除图书
-    };
+    const deleteBook = async (row) => {
+    const response = await fetch(`http://localhost:3000/api/books/${row.bookId}`, {
+        method: 'DELETE'
+    });
+
+    if (response.ok) {
+        fetchBooks(); // 刷新图书列表
+    } else {
+        alert('Failed to delete book');
+    }
+};
 
     // 页面加载时获取图书数据
     onMounted(() => {
