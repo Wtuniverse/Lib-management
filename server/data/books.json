@@ -1,8 +1,20 @@
-{
-    "name": "新书名",
-    "author": "作者名",
-    "publish": "出版社",
-    "isbn": "978XXXXXX",
-    "price": "99.00",
-    "number": "50"
-}
+[
+  {
+    "bookId": 1,
+    "name": "Book One",
+    "author": "Author A",
+    "publish": "Publisher A",
+    "isbn": "1234567890",
+    "price": 9.99,
+    "number": 100
+  },
+  {
+    "bookId": 2,
+    "name": "Book Two",
+    "author": "Author B",
+    "publish": "Publisher B",
+    "isbn": "0987654321",
+    "price": 14.99,
+    "number": 200
+  }
+]

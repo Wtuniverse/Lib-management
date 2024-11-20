@@ -105,68 +105,73 @@ app.post('/admin/login', async (req, res) => {
 
 
 //书的管理
-const booksFilePath = path.join(__dirname, '/data/books.json');
+const BOOKS_FILE = path.join(__dirname, 'data', 'books.json');
 
-// 读取图书数据
-const readBooksData = () => {
-    if (fs.existsSync(booksFilePath)) {
-        const data = fs.readFileSync(booksFilePath);
-        return JSON.parse(data);
-    }
+// 读取书籍数据
+function readBooks() {
+  try {
+    const data = fs.readFileSync(BOOKS_FILE);
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading books file:', error);
     return [];
-};
+  }
+}
 
-// 写入图书数据
-const writeBooksData = (data) => {
-    fs.writeFileSync(booksFilePath, JSON.stringify(data, null, 2));
-};
+// 写入书籍数据
+function writeBooks(books) {
+  try {
+    fs.writeFileSync(BOOKS_FILE, JSON.stringify(books, null, 2));
+  } catch (error) {
+    console.error('Error writing to books file:', error);
+  }
+}
 
-// 获取图书列表
+// 获取所有书籍
 app.get('/api/books', (req, res) => {
-    const books = readBooksData();
-    res.json(books);
+  const books = readBooks();
+  res.json(books);
 });
 
-// 添加新的图书
-app.post('/api/books', (req, res) => {
-    const newBook = {...req.body, bookId: Date.now() }; // 使用当前时间戳作为 bookId
-    const books = readBooksData();
-    books.push(newBook);
-    writeBooksData(books);
-    res.status(201).json(newBook);
-});
-
-// 编辑图书
+// 更新书籍
 app.put('/api/books/:id', (req, res) => {
-    const { id } = req.params;
-    const books = readBooksData();
-    const index = books.findIndex(book => book.bookId === parseInt(id));
+  const bookId = parseInt(req.params.id);
+  const updatedBook = req.body;
+  let books = readBooks();
+  const index = books.findIndex(book => book.bookId === bookId);
 
-    if (index !== -1) {
-        books[index] = { ...books[index], ...req.body };
-        writeBooksData(books);
-        res.json(books[index]);
-    } else {
-        res.status(404).send('Book not found');
-    }
+  if (index !== -1) {
+    books[index] = { bookId, ...updatedBook };
+    writeBooks(books);
+    res.status(200).json(books[index]);
+  } else {
+    res.status(404).send('Book not found');
+  }
 });
 
-// 删除图书
-app.delete('/api/books/:id', (req, res) => {
-    const { id } = req.params;
-    const books = readBooksData();
-    const index = books.findIndex(book => book.bookId === parseInt(id));
+// 删除书籍
+app.delete('/api/books/:id', async (req, res) => {
+  const bookId = parseInt(req.params.id);
 
-    if (index !== -1) {
-        const deletedBook = books.splice(index, 1);
-        writeBooksData(books);
-        res.json(deletedBook[0]);
-    } else {
-        res.status(404).send('Book not found');
+  try {
+    let books = await readBooks();
+    const index = books.findIndex(book => book.bookId === bookId);
+
+    if (index === -1) {
+      return res.status(404).json({ error: 'Book not found' });
     }
+
+    // 使用 splice 方法删除找到的书籍
+    books.splice(index, 1);
+
+    // 写入更新后的数据
+    await writeBooks(books);
+
+    res.status(200).json({ message: `Book with ID ${bookId} deleted successfully.` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
-
-
 
 
 

@@ -129,7 +129,7 @@ export default {
 
     // 删除图书
     const deleteBook = async (row) => {
-    const response = await fetch(`http://localhost:3000/api/books/${row.bookId}`, {
+    const response = await fetch(`http://localhost:5000/api/books/${row.bookId}`, {
         method: 'DELETE'
     });
 
