@@ -87,6 +87,11 @@ export default {
               password: form.value.password,
               email: isRegister.value ? form.value.email : undefined
             });
+
+            // 假设JWT存储在response.data.token中
+            const token = response.data.token;
+            localStorage.setItem('jwt', token); // 保存JWT到本地存储
+
             ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
             // 登录或注册成功后的页面跳转
             router.push({ name: 'reader' }); // 跳转到主页

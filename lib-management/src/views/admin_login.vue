@@ -81,8 +81,12 @@ export default {
               password: form.value.password,
               ...(isRegister.value && { securityCode: form.value.securityCode }),
             });
-            ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
-            router.push({ name: 'admin' });
+
+            if (response.data.token) {
+              localStorage.setItem('token', response.data.token); // 存储JWT到localStorage
+              ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
+              router.push({ name: 'admin' }); // 登录成功后重定向
+            }
           } catch (error) {
             ElMessage.error(error.response?.data || 'An error occurred');
           } finally {
@@ -91,7 +95,7 @@ export default {
         }
       });
     };
-
+    
     const toggleForm = () => {
       isRegister.value = !isRegister.value;
       form.value.securityCode = '';  // Reset security code on toggle

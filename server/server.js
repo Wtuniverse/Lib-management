@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 //登陆
 const usersFilePath = './data/users.json';
 const adminsFilePath = './data/admins.json';
+const SECRET_KEY = '12345678';
 
 // 读取用户或管理员数据
 function readData(filePath) {
@@ -28,6 +29,19 @@ function readData(filePath) {
 // 写入用户或管理员数据
 function writeData(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
+
+// 中间件：验证 JWT
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
 }
 
 // 用户注册
@@ -49,16 +63,18 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const users = readData(usersFilePath);
-
   const user = users.find(user => user.username === username);
   if (!user) return res.status(400).send('Invalid credentials');
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.status(400).send('Invalid credentials');
 
-  // 返回 user 数据或 token，视需要而定
-  res.json({ message: 'Login successful!', username });
+  const token = jwt.sign({ username: user.username, role: 'user' }, SECRET_KEY, { expiresIn: '1h' });
+  res.json({ message: 'Login successful!', token });
 });
+
+
+
 
 // 在管理员注册时添加安全码
 app.post('/admin/register', async (req, res) => {
@@ -75,32 +91,42 @@ app.post('/admin/register', async (req, res) => {
   res.status(201).send('Admin registered successfully');
 });
 
-// 在管理员登录时添加安全码的验证
+
+// 管理员登录
 app.post('/admin/login', async (req, res) => {
   const { username, password, securityCode } = req.body;
   const admins = readData(adminsFilePath);
-
   const admin = admins.find(admin => admin.username === username);
   if (!admin) return res.status(400).send('Invalid credentials');
 
   const isMatch = await bcrypt.compare(password, admin.password);
   if (!isMatch) return res.status(400).send('Invalid credentials');
 
-  // 验证安全码，仅在注册时要求
   if (securityCode && admin.securityCode !== securityCode) {
     return res.status(400).send('Invalid security code');
   }
 
-  const token = jwt.sign({ username: admin.username }, 'your_jwt_secret');
+  const token = jwt.sign({ username: admin.username, role: 'admin' }, SECRET_KEY, { expiresIn: '1h' });
   res.json({ message: 'Login successful!', token });
 });
 
+// 获取当前用户
+app.get('/api/user/current_user', authenticateToken, (req, res) => {
+  if (req.user.role === 'user') {
+    res.json({ username: req.user.username });
+  } else {
+    res.status(403).send('Access denied');
+  }
+});
 
-
-
-
-
-
+// 获取当前管理员
+app.get('/api/admin/current_user', authenticateToken, (req, res) => {
+  if (req.user.role === 'admin') {
+    res.json({ username: req.user.username });
+  } else {
+    res.status(403).send('Access denied');
+  }
+});
 
 
 
