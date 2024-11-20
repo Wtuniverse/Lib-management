@@ -39,14 +39,6 @@ const router = createRouter({
         component: () => import('../components/admin/admins_lend_list.vue')
     },
     {
-        path:'readers',
-        component: () => import('../components/admin/admins_readers.vue')
-    },
-    {
-      path:'readeradd',
-      component: () => import('../components/admin/admins_readers_add.vue')
-    },
-    {
       path:'book',
       component: () => import('../components/admin/admins_books.vue')
     },
