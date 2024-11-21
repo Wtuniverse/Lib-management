@@ -30,6 +30,7 @@
         <span>My Borrowed Books</span>
       </div>
       <el-table :data="loanLogs" style="width: 100%" stripe>
+        <el-table-column label="Borrow ID" prop="borrowerId" />
         <el-table-column label="Reader ID" prop="readerId" />
         <el-table-column label="Book ID" prop="bookId" />
         <el-table-column label="Lend Date" prop="lendDate" />
@@ -42,8 +43,8 @@
           </template>
         </el-table-column>
         <el-table-column label="Actions">
-          <template #default="{ row, $index }">
-            <el-button type="text" size="small" @click="deleteRecord($index)">Delete</el-button>
+          <template #default="{ row }">
+            <el-button type="text" size="small" @click="deleteRecord(row)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,32 +56,14 @@
 import { ref, onMounted } from 'vue';
 import { ElAlert, ElTable, ElTableColumn, ElCard, ElButton } from 'element-plus';
 import dayjs from 'dayjs';  // 引入 dayjs 库
+import axios from 'axios'
 import 'element-plus/dist/index.css';
 
 export default {
   name: 'LoanLog',
   setup() {
     // 数据状态
-    const loanLogs = ref([
-      {
-        readerId: 'R001',  // 读者ID
-        bookId: 'B001',
-        lendDate: '2024-10-01',
-        backDate: '',
-      },
-      {
-        readerId: 'R002',  // 读者ID
-        bookId: 'B002',
-        lendDate: '2024-09-15',
-        backDate: '2024-10-10',
-      },
-      {
-        readerId: 'R003',  // 读者ID
-        bookId: 'B003',
-        lendDate: '2024-08-01',
-        backDate: '',
-      },
-    ]);
+    const loanLogs = ref([]);
 
     const successMessage = ref('Data loaded successfully!');
     const errorMessage = ref('');
@@ -94,9 +77,33 @@ export default {
     };
 
     // 删除记录
-    const deleteRecord = (index) => {
-      loanLogs.value.splice(index, 1); // 删除对应索引的记录
-      successMessage.value = 'Record deleted successfully!';
+    const deleteRecord = async (row) => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/borrower/${row.borrowerId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          // 刷新数据
+          fetchLoanLogs();
+          successMessage.value = 'Record deleted successfully!';
+        } else {
+          errorMessage.value = 'Failed to delete record';
+        }
+      } catch (error) {
+        errorMessage.value = 'Failed to delete record: ' + error.message;
+      }
+    };
+
+     // 从后端获取数据
+     const fetchLoanLogs = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/borrower'); // 替换为你的后端 URL
+        loanLogs.value =  await response.json();
+        successMessage.value = 'Data loaded successfully!';
+      } catch (error) {
+        errorMessage.value = 'Failed to load data: ' + error.message;
+      }
     };
 
     // 动态加载头部内容
@@ -105,6 +112,8 @@ export default {
       if (header) {
         header.innerHTML = '<h1>My Borrowed Books</h1>';
       }
+      // 调用获取数据的函数
+      fetchLoanLogs();
     });
 
     return {
