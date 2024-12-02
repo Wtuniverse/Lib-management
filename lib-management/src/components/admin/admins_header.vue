@@ -14,7 +14,7 @@
       <RouterLink to="/admin/book"><el-menu-item index="1-1">All Books</el-menu-item></RouterLink>
       <RouterLink to="/admin/bookadd"><el-menu-item index="1-2">Book Add</el-menu-item></RouterLink>
     </el-sub-menu>
- 
+
     <el-sub-menu index="3">
       <template #title>Lending Managment</template>
       <RouterLink to="/admin/lendlist" ><el-menu-item index="3-1">Lend List</el-menu-item></RouterLink>
@@ -23,7 +23,7 @@
       <template #title>Modify Password</template>
     </el-menu-item></RouterLink>
     <el-menu-item index="5" @click="showUsernameDialog = true">
-      <template #title>${admin.username}</template>
+      <template #title>{{admin.username}}</template>
     </el-menu-item>
     <el-menu-item index="6" @click="handleLogout">
       <template #title>Log Out</template>
@@ -69,6 +69,7 @@ onMounted(() => {
   if (user) {
     admin.value = JSON.parse(user)
   }
+  console.log(admin)
 })
 
 </script>
