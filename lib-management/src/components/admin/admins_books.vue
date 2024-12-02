@@ -18,7 +18,7 @@
 
     <!-- 主体内容 -->
     <el-main>
-      <el-table :data="books" style="width: 100%" @row-click="viewDetails">
+      <el-table :data="books" style="width: 100%" align="center" @row-click="viewDetails">
         <el-table-column prop="name" label="Name" width="150"></el-table-column>
         <el-table-column prop="author" label="Author" width="150"></el-table-column>
         <el-table-column prop="publish" label="Publish" width="150"></el-table-column>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed} from 'vue';
 import { ElTable, ElTableColumn, ElInput, ElButton, ElDialog, ElForm, ElFormItem, ElContainer, ElHeader, ElMain, ElRow, ElCol } from 'element-plus';
 
 export default {
@@ -83,6 +83,12 @@ export default {
   setup() {
     const searchWord = ref('');
     const books = ref([]);
+    const filteredBooks = computed(() => {
+      if (!searchWord.value) return books.value;
+      return books.value.filter(book =>
+        book.name.toLowerCase().includes(searchWord.value.toLowerCase())
+      );
+    });
     const dialogVisible = ref(false);
     const selectedBook = ref({});
 
@@ -95,7 +101,7 @@ export default {
     // 搜索图书
     const searchBooks = () => {
       // 这里可以根据关键字过滤图书
-      fetchBooks(); // 这里只是模拟刷新
+      //fetchBooks(); // 这里只是模拟刷新
     };
 
     // 查看图书详情
@@ -147,7 +153,7 @@ export default {
 
     return {
       searchWord,
-      books,
+      books: filteredBooks,
       dialogVisible,
       selectedBook,
       searchBooks,

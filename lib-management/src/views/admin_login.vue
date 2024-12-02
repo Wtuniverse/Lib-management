@@ -25,6 +25,10 @@
         <div class="toggle-form" @click="toggleForm">
           {{ isRegister ? 'Already have an account? Login' : 'New admin? Register' }}
         </div>
+        <!-- 添加跳转到用户登录页面的超链接 -->
+        <div class="reader-link">
+          <a href="/">Reader Login</a> <!-- 这里的 href 路径根据你的路由设置进行调整 -->
+        </div>
       </el-card>
     </div>
   </div>
@@ -81,12 +85,11 @@ export default {
               password: form.value.password,
               ...(isRegister.value && { securityCode: form.value.securityCode }),
             });
-
-            if (response.data.token) {
-              localStorage.setItem('token', response.data.token); // 存储JWT到localStorage
-              ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
-              router.push({ name: 'admin' }); // 登录成功后重定向
-            }
+            ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
+            // 将用户信息存储到 localStorage
+            const user = response.data;
+            localStorage.setItem('user', JSON.stringify(user));
+            router.push({ name: 'admin' });
           } catch (error) {
             ElMessage.error(error.response?.data || 'An error occurred');
           } finally {
@@ -95,7 +98,7 @@ export default {
         }
       });
     };
-    
+
     const toggleForm = () => {
       isRegister.value = !isRegister.value;
       form.value.securityCode = '';  // Reset security code on toggle
@@ -156,6 +159,11 @@ export default {
   width: 100%;
 }
 .admin-link {
+  text-align: right; /* 右对齐 */
+  margin-top: 20px; /* 上边距 */
+}
+
+.reader-link {
   text-align: right; /* 右对齐 */
   margin-top: 20px; /* 上边距 */
 }
