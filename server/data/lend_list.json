@@ -1,0 +1,14 @@
+[
+    {
+      "userId": "1",
+      "bookId": "1",
+      "lendTime": "2023-01-01",
+      "returnTime": "2023-01-15"
+    },
+    {
+      "userId": "2",
+      "bookId": "2",
+      "lendTime": "2023-01-02",
+      "returnTime": "2023-01-16"
+    }
+  ]

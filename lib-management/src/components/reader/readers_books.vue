@@ -15,7 +15,6 @@
         </el-col>
       </el-row>
     </el-header>
-
     <!-- 主体内容 -->
     <el-main>
       <el-table :data="books" style="width: 100%" @row-click="viewDetails">
@@ -25,6 +24,12 @@
         <el-table-column prop="isbn" label="ISBN" width="150"></el-table-column>
         <el-table-column prop="price" label="Price" width="100"></el-table-column>
         <el-table-column prop="number" label="Number" width="120"></el-table-column>
+        <!-- 新增lend按钮 -->
+        <el-table-column label="Operations">
+          <template slot-scope="scope">
+            <el-button type="primary" @click="lendBook(scope.row)">Lend</el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <!-- 图书详情弹出框 -->
@@ -48,10 +53,20 @@
           <el-form-item label="Number">
             <el-input v-model="selectedBook.number" disabled></el-input>
           </el-form-item>
+          <el-button type="primary" @click="lendBook(selectedBook)">Lend</el-button>
         </el-form>
       </el-dialog>
     </el-main>
   </el-container>
+  <!-- 借书填写日期框弹出 -->
+  <el-dialog title="Lend Book" :visible.sync="lendModalVisible">
+    <el-form>
+      <el-form-item label="Return Date">
+        <el-date-picker v-model="returnDate" type="date" placeholder="Pick a date"></el-date-picker>
+      </el-form-item>
+      <el-button type="primary" @click="confirmLend">Confirm</el-button>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script>
@@ -79,7 +94,10 @@ export default {
     const books = ref([]);
     const dialogVisible = ref(false);
     const selectedBook = ref({});
-
+    // 新增
+    const lendModalVisible = ref(false);
+    const selectedBookForLend = ref(null);
+    const returnDate = ref(null);
     // 模拟获取图书数据
     const fetchBooks = async () => {
       // 假设从后端API获取图书列表
@@ -102,11 +120,51 @@ export default {
       dialogVisible.value = true; // 打开弹出框
     };
 
+    // 显示借书模态框
+    const showLendModal = (book) => {
+      selectedBookForLend.value = book;
+      lendModalVisible.value = true;
+    };
+
+    // 确认借书
+    const confirmLend = () => {
+      if (!returnDate.value) {
+        alert('Please select a return date.');
+        return;
+      }
+
+      const lendRecord = {
+        bookId: selectedBookForLend.value.id,
+        bookName: selectedBookForLend.value.name,
+        lendTime: new Date().toISOString(),
+        returnTime: returnDate.value.toISOString()
+      };
+
+      lendBook(lendRecord);
+    };
+
+    // 借书
+    const lendBook = async (lendRecord) => {
+      try {
+        const response = await axios.post('/api/lend', lendRecord);
+        if (response.status === 201) {
+          lendList.value.push(lendRecord);
+          writeLendList(lendList.value);
+          alert('Book lend successfully');
+        }
+      } catch (error) {
+        console.error('Error lending book:', error);
+      }
+    };
+
+
 
     // 页面加载时获取图书数据
     onMounted(() => {
       fetchBooks();
     });
+
+
 
     return {
       searchWord,
@@ -114,7 +172,9 @@ export default {
       dialogVisible,
       selectedBook,
       searchBooks,
-      viewDetails
+      viewDetails,
+      lendModalVisible,
+      selectedBookForLend,
     };
   }
 };

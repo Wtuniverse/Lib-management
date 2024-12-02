@@ -41,11 +41,11 @@
             <span v-if="!row.backDate && isOverdue(row)">/ Overdue</span>
           </template>
         </el-table-column>
-        <el-table-column label="Actions">
+        <!-- <el-table-column label="Actions">
           <template #default="{ row, $index }">
             <el-button type="text" size="small" @click="deleteRecord($index)">Delete</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </el-card>
   </div>
