@@ -65,7 +65,7 @@ export default {
     // 加载借还日志
     const loadLoanLogs = async () => {
       try {
-        const response = await fetch('/api/lend_list');
+        const response = await fetch('http://localhost:5000/api/lend_list');
         console.log(response)
         if (!response.ok) {
           throw new Error('Network response was not ok');
