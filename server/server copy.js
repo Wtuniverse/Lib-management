@@ -199,69 +199,90 @@ app.delete('/api/books/:id', async (req, res) => {
   }
 });
 
+// 读取lend_list.json文件的内容
+function readLendList() {
+  try {
+    // 确保路径正确指向你的 lend_list.json 文件
+    const data = fs.readFileSync(path.join(__dirname, 'data', 'lend_list.json'));
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading lend_list.json file:', error);
+    return [];
+  }
+}
 
-
-// 借书
-app.post('/api/lend', (req, res) => {
-  const { bookId, bookName, lendTime, returnTime } = req.body;
-  const lendRecord = { bookId, bookName, lendTime, returnTime };
-
-  // 确保lendList.json文件存在，如果不存在则创建一个空数组
-  const lendListPath = path.join(__dirname, '/server/data/lend_list.json');
-  fs.readFile(lendListPath, 'utf8', (err, data) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        // 文件不存在，创建一个空数组
-        const lendList = [];
-        lendList.push(lendRecord);
-        fs.writeFile(lendListPath, JSON.stringify(lendList), 'utf8', (err) => {
-          if (err) {
-            res.status(500).json({ message: 'Error writing to lend_list.json' });
-          } else {
-            res.status(201).json({ message: 'Book lend successfully', lendRecord });
-          }
-        });
-      } else {
-        // 其他错误
-        res.status(500).json({ message: 'Error reading lend_list.json' });
-      }
-    } else {
-      // 文件存在，读取内容并添加新的借书记录
-      const lendList = JSON.parse(data);
-      lendList.push(lendRecord);
-      fs.writeFile(lendListPath, JSON.stringify(lendList), 'utf8', (err) => {
-        if (err) {
-          res.status(500).json({ message: 'Error writing to lend_list.json' });
-        } else {
-          res.status(201).json({ message: 'Book lend successfully', lendRecord });
-        }
-      });
-    }
-  });
+// 路由：获取lend_list.json文件的内容
+app.get('/api/lend_list', (req, res) => {
+  console.log('Fetching lend list...');
+  const lendList = readLendList();
+  console.log('Lend list:', lendList); // 打印借阅列表到控制台
+  res.json(lendList);
 });
 
-// 获取借书记录
-app.get('/api/lend-list', (req, res) => {
-  const lendListPath = path.join(__dirname, '/server/data/lend_list.json');
-  fs.readFile(lendListPath, 'utf8', (err, data) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        // 文件不存在，返回空数组
-        res.json([]);
-      } else {
-        // 其他错误
-        res.status(500).json({ message: 'Error reading lend_list.json' });
-      }
-    } else {
-      // 文件存在，解析JSON并返回内容
-      try {
-        const lendList = JSON.parse(data);
-        res.json(lendList);
-      } catch (parseErr) {
-        res.status(500).json({ message: 'Error parsing lend_list.json' });
-      }
+
+// 确保所有数据文件存在并初始化
+function ensureDataFilesExist() {
+  const files = [usersFilePath, adminsFilePath, path.join(__dirname, 'data', 'books.json'), path.join(__dirname, 'data', 'lend_list.json')];
+  files.forEach(filePath => {
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, JSON.stringify([]));
     }
   });
+}
+
+
+
+ensureDataFilesExist();
+
+// 测试读取 lend_list.json 文件
+const lendList = readLendList();
+console.log('Lend list:', lendList);
+
+
+// 写入借阅列表数据
+function writeLendList(lendList) {
+  try {
+    fs.writeFileSync(path.join(__dirname, 'data', 'lend_list.json'), JSON.stringify(lendList, null, 2));
+  } catch (error) {
+    console.error('Error writing to lend_list.json file:', error);
+  }
+}
+
+// 路由：借书
+app.post('/api/lendBook', authenticateToken, async (req, res) => {
+  const { userId, bookId, bookName, lendTime, returnTime } = req.body;
+
+  // 确保所有必要的参数都存在
+  if (!userId || !bookId || !lendTime || !returnTime) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  const lendList = readLendList();
+
+  // 检查是否该用户已经借了这本书
+  const existingRecord = lendList.find(record => record.userId === userId && record.bookId === bookId && record.returned === false);
+  if (existingRecord) {
+    return res.status(400).json({ message: 'You have already borrowed this book and not returned it yet.' });
+  }
+
+  // 创建新的借阅记录
+  const newLendRecord = {
+    userId,
+    bookId,
+    bookName,
+    lendTime,
+    returnTime,
+    returned: false // 添加一个字段以跟踪书籍是否已归还
+  };
+
+  // 将新记录添加到借阅列表中
+  lendList.push(newLendRecord);
+
+  // 更新lend_list.json文件
+  writeLendList(lendList);
+
+  // 返回成功响应
+  res.status(201).json({ message: 'Book lent successfully', lendRecord: newLendRecord });
 });
 
 // 启动服务器

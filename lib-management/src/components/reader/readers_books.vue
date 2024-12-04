@@ -7,7 +7,7 @@
         <el-col :span="12">
           <el-input
             placeholder="Send a book name"
-            :value="searchWord"
+            v-model="searchWord"
             clearable
             @input="updateSearchWord"
             class="input-search"
@@ -58,24 +58,45 @@
           </el-form-item>
         </el-form>
       </el-dialog>
+
+      <!-- 新增的借阅日期选择弹出框 -->
+      <el-dialog title="Choose Return Date" :visible.sync="lendModalVisible">
+        <el-form>
+          <el-form-item label="Return Date">
+            <el-date-picker
+              v-model="returnDate"
+              type="date"
+              placeholder="Pick a return date"
+              @change="onDateSelected"
+            />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="lendModalVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="confirmLend">Confirm</el-button>
+        </span>
+      </el-dialog>
     </el-main>
   </el-container>
-
-  <!-- 借书填写日期框弹出 -->
-  <el-dialog title="Lend Book" :visible.sync="lendModalVisible">
-    <el-form>
-      <el-form-item label="Return Date">
-        <el-date-picker :value="returnDate" type="date" placeholder="Pick a date" @change="updateReturnDate"></el-date-picker>
-      </el-form-item>
-      <el-button type="primary" @click="confirmLend">Confirm</el-button>
-    </el-form>
-  </el-dialog>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
-import { ElTable, ElTableColumn, ElInput, ElButton, ElDialog, ElForm, ElFormItem, ElContainer, ElHeader, ElMain, ElRow, ElCol } from 'element-plus';
-import axios from 'axios';
+import {
+  ElTable,
+  ElTableColumn,
+  ElInput,
+  ElButton,
+  ElDialog,
+  ElForm,
+  ElFormItem,
+  ElContainer,
+  ElHeader,
+  ElMain,
+  ElRow,
+  ElCol,
+  ElDatePicker // 添加这一行以注册 ElDatePicker 组件
+} from 'element-plus';
 
 export default {
   name: 'BookManagement',
@@ -91,7 +112,8 @@ export default {
     ElHeader,
     ElMain,
     ElRow,
-    ElCol
+    ElCol,
+    ElDatePicker // 注册 ElDatePicker 组件
   },
   setup() {
     const searchWord = ref('');
@@ -114,22 +136,19 @@ export default {
       searchWord.value = event.target.value;
     };
 
-    const searchBooks = () => {
-      fetchBooks();
-    };
-
     const viewDetails = (row) => {
       selectedBook.value = { ...row };
       dialogVisible.value = true;
     };
 
     const showLendModal = (book) => {
+      console.log('Lend button clicked for book:', book); // 调试信息
       selectedBookForLend.value = book;
       lendModalVisible.value = true;
     };
 
-    const updateReturnDate = (date) => {
-      returnDate.value = date;
+    const onDateSelected = (date) => {
+      console.log('Selected return date:', date);
     };
 
     const confirmLend = async () => {
@@ -138,21 +157,34 @@ export default {
         return;
       }
 
-      const lendRecord = {
-        bookId: selectedBookForLend.value.bookId,
-        bookName: selectedBookForLend.value.name,
-        lendTime: new Date().toISOString(),
-        returnTime: returnDate.value.toISOString()
-      };
-
       try {
-        const response = await axios.post('/api/lend', lendRecord);
-        if (response.status === 201) {
-          alert('Book lend successfully');
-        }
+        // 构造要发送的数据对象
+        const userId = "CURRENT_USER_ID"; // 你需要根据实际情况获取当前用户的ID
+        const bookId = selectedBookForLend.value.bookId;
+        const bookName = selectedBookForLend.value.name;
+        const lendTime = new Date().toISOString().split('T')[0]; // 获取当前日期
+        const returnTime = returnDate.value.toISOString().split('T')[0];
+
+        // 发送POST请求到后端API
+        const response = await axios.post('/api/lendBook', {
+          userId,
+          bookId,
+          bookName,
+          lendTime,
+          returnTime
+        });
+
+        console.log('Book lent successfully:', response.data);
+        alert('Book lent successfully!');
+
+        // 关闭弹出框并清空已选书籍和日期
         lendModalVisible.value = false;
+        selectedBookForLend.value = null;
+        returnDate.value = null;
+
       } catch (error) {
-        console.error('Error lending book:', error);
+        console.error('Error lending book:', error.response ? error.response.data : error.message);
+        alert('Failed to lend the book. Please try again.');
       }
     };
 
@@ -165,14 +197,14 @@ export default {
       books,
       dialogVisible,
       selectedBook,
-      searchBooks,
+      updateSearchWord,
       viewDetails,
       lendModalVisible,
       selectedBookForLend,
-      updateSearchWord,
-      updateReturnDate,
-      confirmLend,
-      showLendModal
+      showLendModal,
+      returnDate,
+      onDateSelected,
+      confirmLend
     };
   }
 };

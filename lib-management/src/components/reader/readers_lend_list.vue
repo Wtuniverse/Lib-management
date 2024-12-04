@@ -1,18 +1,6 @@
 <template>
   <div>
-    <!-- Header部分 -->
     <div id="header" ref="header"></div>
-
-    <!-- 提示信息 -->
-    <el-alert
-      v-if="successMessage"
-      title="Success"
-      type="success"
-      :closable="false"
-      class="mb-4"
-    >
-      {{ successMessage }}
-    </el-alert>
 
     <el-alert
       v-if="errorMessage"
@@ -24,20 +12,20 @@
       {{ errorMessage }}
     </el-alert>
 
-    <!-- 借还日志表格 -->
     <el-card>
       <div slot="header">
         <span>My lend list</span>
       </div>
       <el-table :data="loanLogs" style="width: 100%" stripe>
-        <el-table-column label="bookID" prop="bookId" />
-        <el-table-column label="lendDate" prop="lendDate" />
-        <el-table-column label="backDate" prop="backDate" />
+        <el-table-column label="User ID" prop="userId" />
+        <el-table-column label="Book ID" prop="bookId" />
+        <el-table-column label="Lend Date" prop="lendTime" />
+        <el-table-column label="Return Date" prop="returnTime" />
         <el-table-column label="Situation">
           <template #default="{ row }">
-            <span v-if="!row.backDate">Lending</span>
+            <span v-if="!row.returnTime">Lending</span>
             <span v-else>Returned</span>
-            <span v-if="!row.backDate && isOverdue(row)">/ Overdue</span>
+            <span v-if="!row.returnTime && isOverdue(row)">/ Overdue</span>
           </template>
         </el-table-column>
       </el-table>
@@ -53,50 +41,48 @@ import 'element-plus/dist/index.css';
 export default {
   name: 'LoanLog',
   setup() {
-    // 数据状态
-    const loanLogs = ref([
-      {
-        bookId: 'B001',
-        lendDate: '2024-10-01',
-        backDate: '',
-      },
-      {
-        bookId: 'B002',
-        lendDate: '2024-09-15',
-        backDate: '2024-10-10',
-      },
-      {
-        bookId: 'B003',
-        lendDate: '2024-08-01',
-        backDate: '',
-      },
-    ]);
-
-    const successMessage = ref('');
+    const loanLogs = ref([]);
     const errorMessage = ref('');
 
     // 判断是否超期
     const isOverdue = (log) => {
       const currentTime = new Date().getTime();
-      const lendDate = new Date(log.lendDate).getTime();
+      const lendDate = new Date(log.lendTime).getTime();
       const loanPeriod = 30 * 24 * 60 * 60 * 1000; // 假设借期为30天
 
       return currentTime - lendDate > loanPeriod;
     };
 
     // 动态加载头部内容
-    onMounted(() => {
+    onMounted(async () => {
       const header = document.querySelector('#header');
       if (header) {
         header.innerHTML = '<h1>Lend Lists</h1>';
       }
+      await loadLoanLogs();
     });
+
+    // 加载借还日志
+    const loadLoanLogs = async () => {
+      try {
+        const response = await fetch('/api/lend_list');
+        console.log(response)
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        loanLogs.value = data;
+      } catch (error) {
+        console.error('Error fetching lend list:', error);
+        errorMessage.value = 'Failed to load loan logs.';
+      }
+    };
+
 
     return {
       loanLogs,
-      successMessage,
-      errorMessage,
       isOverdue,
+      errorMessage,
     };
   },
 };
