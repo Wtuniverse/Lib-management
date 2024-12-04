@@ -59,9 +59,9 @@
         </el-form>
       </el-dialog>
 
-      <!-- 新增的借阅日期选择弹出框 -->
-      <el-dialog title="Choose Return Date" :visible.sync="lendModalVisible">
-        <el-form>
+      <!-- 借阅日期选择弹出框 -->
+      <el-dialog title="Choose Return Date" v-model="lendModalVisible" width="500">
+        <el-form label-width="100px">
           <el-form-item label="Return Date">
             <el-date-picker
               v-model="returnDate"
@@ -76,6 +76,7 @@
           <el-button type="primary" @click="confirmLend">Confirm</el-button>
         </span>
       </el-dialog>
+
     </el-main>
   </el-container>
 </template>
@@ -120,7 +121,7 @@ export default {
     const books = ref([]);
     const dialogVisible = ref(false);
     const selectedBook = ref({});
-    const lendModalVisible = ref(false);                   
+    const lendModalVisible = ref(false);
     const selectedBookForLend = ref(null);
     const returnDate = ref(null);
 
@@ -142,10 +143,11 @@ export default {
     };
 
     const showLendModal = (book) => {
+      console.log('value:', lendModalVisible.value);
       console.log('Lend button clicked for book:', book); // 调试信息
       selectedBookForLend.value = book;
       lendModalVisible.value = true;
-      console.log('value:', lendModalVisible);
+      console.log('value:', lendModalVisible.value);
     };
 
     const onDateSelected = (date) => {
