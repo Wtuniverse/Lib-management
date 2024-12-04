@@ -120,7 +120,7 @@ export default {
     const books = ref([]);
     const dialogVisible = ref(false);
     const selectedBook = ref({});
-    const lendModalVisible = ref(false);
+    const lendModalVisible = ref(false);                   
     const selectedBookForLend = ref(null);
     const returnDate = ref(null);
 
@@ -145,6 +145,7 @@ export default {
       console.log('Lend button clicked for book:', book); // 调试信息
       selectedBookForLend.value = book;
       lendModalVisible.value = true;
+      console.log('value:', lendModalVisible);
     };
 
     const onDateSelected = (date) => {
@@ -159,7 +160,7 @@ export default {
 
       try {
         // 构造要发送的数据对象
-        const userId = "CURRENT_USER_ID"; // 你需要根据实际情况获取当前用户的ID
+        const userId = "CURRENT_USER_ID";
         const bookId = selectedBookForLend.value.bookId;
         const bookName = selectedBookForLend.value.name;
         const lendTime = new Date().toISOString().split('T')[0]; // 获取当前日期
