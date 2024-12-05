@@ -3,25 +3,5 @@
     "bookId": 1,
     "lendDate": "2024-12-05",
     "returnDate": "2024-12-07"
-  },
-  {
-    "bookId": 1,
-    "lendDate": "2024-12-05",
-    "returnDate": "2024-12-07"
-  },
-  {
-    "bookId": 1,
-    "lendDate": "2024-12-05",
-    "returnDate": "2024-12-07"
-  },
-  {
-    "bookId": 1,
-    "lendDate": "2024-12-05",
-    "returnDate": "2024-12-07"
-  },
-  {
-    "bookId": 1,
-    "lendDate": "2024-12-05",
-    "returnDate": "2024-12-07"
   }
 ]

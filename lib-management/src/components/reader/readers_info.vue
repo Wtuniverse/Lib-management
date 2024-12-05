@@ -89,7 +89,7 @@ export default {
     // 用户个人信息（模拟数据）
     const readerInfo = ref({
       readerId: '123456',
-      name: '张三',
+      name: 'kzy',
       sex: '男',
       birth: '1990-01-01',
       address: '北京市朝阳区',
