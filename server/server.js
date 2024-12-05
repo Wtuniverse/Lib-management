@@ -235,110 +235,109 @@ app.delete('/api/books/:id', async (req, res) => {
 
 const BORROWER_FILE = path.join(__dirname, 'data', 'borrower.json');
 
-// 读取lend_list.json文件的内容
-function readLendList() {
+// 读取借阅记录数据
+function readBorrowers() {
   try {
-    // 确保路径正确指向你的 lend_list.json 文件
-    const data = fs.readFileSync(path.join(__dirname, 'data', 'lend_list.json'));
+    const data = fs.readFileSync(BORROWER_FILE);
     return JSON.parse(data);
   } catch (error) {
-    console.error('Error reading lend_list.json file:', error);
+    console.error('Error reading borrower file:', error);
     return [];
   }
 }
 
-// 路由：获取lend_list.json文件的内容
-app.get('/api/lend_list', (req, res) => {
-  console.log('Fetching lend list...');
-  const lendList = readLendList();
-  console.log('Lend list:', lendList); // 打印借阅列表到控制台
-  res.json(lendList);
-});
+// 写入借阅记录数据
+function writeBorrowers(borrowers) {
+  try {
+    fs.writeFileSync(BORROWER_FILE, JSON.stringify(borrowers, null, 2));
+  } catch (error) {
+    console.error('Error writing to borrower file:', error);
+  }
+}
 
-
-// 确保所有数据文件存在并初始化
-function ensureDataFilesExist() {
-  const files = [usersFilePath, adminsFilePath, path.join(__dirname, 'data', 'books.json'), path.join(__dirname, 'data', 'lend_list.json')];
-  files.forEach(filePath => {
-    if (!fs.existsSync(filePath)) {
-      if (filePath.includes('lend_list.json')) {
-        fs.writeFileSync(filePath, JSON.stringify([], null, 2)); // 初始化为空数组
-      } else {
-        fs.writeFileSync(filePath, JSON.stringify([]));
-      }
-    }
+// 检查借阅记录是否存在
+app.get('/api/check-borrower', (req, res) => {
+  const borrowerId = req.query.borrowerId;
+  const borrowers = readBorrowers();
+  const isBorrowerExists = borrowers.some(borrower => borrower.borrowerId === borrowerId);
+  res.json({ exists: isBorrowerExists });
   });
-}
 
-ensureDataFilesExist();
+// 添加借阅记录
+app.post('/api/borrower', (req, res) => {
+  const newBorrower = req.body;
 
-// 写入借阅数据
-async function writeLendList(lendList) {
-  try {
-    await fs.promises.writeFile(
-      path.join(__dirname, 'data', 'lend_list.json'),
-      JSON.stringify(lendList, null, 2)
-    );
-  } catch (error) {
-    console.error('Error writing to lend_list.json file:', error);
-    throw error; // 抛出错误，让调用者知道发生了什么
+  // 读取现有借阅记录数据
+  let borrowers = readBorrowers();
+    
+  // 检查 borrowerId 是否已存在
+  const isBorrowerExists = borrowers.some(borrower => borrower.borrowerId === newBorrower.borrowerId);
+  if (isBorrowerExists) {
+    return res.status(400).json({ error: 'Borrower ID already exists' });
   }
-}
 
-app.post('/api/lend',async (req, res) => {
-  const { bookId, lendDate, returnDate } = req.body;
+  // 生成一个新的 borrowerId
+  const newBorrowerId = borrowers.length > 0 ? borrowers[borrowers.length - 1].borrowerId + 1 : 1;
+  newBorrower.borrowerId = newBorrowerId;
 
-  let lendList = readLendList();
-  const newLendRecord = {
-    bookId,
-    lendDate,
-    returnDate,
-  };
+  // 添加新的借阅记录
+  borrowers.push(newBorrower);
 
-  lendList.push(newLendRecord);
-  writeLendList(lendList);
+  // 写入更新后的借阅记录数据
+  writeBorrowers(borrowers);
 
-  res.status(201).json({ message: 'Book lent successfully!', lendRecord: newLendRecord });
+  res.status(201).json(newBorrower);
 });
 
-async function hasUnreturnedLend(bookId) {
-  const lendList = readLendList();
-  const now = new Date().toISOString().split('T')[0]; // 获取当前日期并格式化为 YYYY-MM-DD
 
-  const unreturned = lendList.some(record =>
-    record.bookId === bookId &&
-    (!record.returnDate || isAfter(record.returnDate, now))
-  );
 
-  console.log('Checking for unreturned lends:', { bookId, now, result: unreturned });
-  return unreturned;
-}
 
-// 添加一个新的路由来检查书籍借阅状态
-app.get('/api/check-lend-status', async (req, res) => {
-  const { bookId } = req.query;
+// 获取所有借阅记录
+app.get('/api/borrower', (req, res) => {
+  const borrowers = readBorrowers();
+  res.json(borrowers);
+});
 
-  if (!bookId) {
-    return res.status(400).json({ error: 'Book ID is required.' });
-  }
+// 更新借阅记录
+app.put('/api/borrower/:id', (req, res) => {
+  const borrowerId = parseInt(req.params.id);
+  const updatedBorrower = req.body;
+  let borrowers = readBorrowers();
+  const index = borrowers.findIndex(borrower => borrower.borrowerId === borrowerId);
 
-  try {
-    // 这里假设 readLendList() 函数从 JSON 文件读取借阅列表
-    const lendList = readLendList();
-    const now = new Date().toISOString().split('T')[0]; // 获取当前日期并格式化为 YYYY-MM-DD
-
-    // 查找是否有未归还的记录
-    const hasUnreturned = lendList.some(record =>
-      record.bookId === parseInt(bookId) && // 确保 bookId 是数字类型
-      (!record.returnDate || new Date(record.returnDate) > new Date(now))
-    );
-
-    res.json({ isLent: hasUnreturned });
-  } catch (error) {
-    console.error('Error checking lend status:', error);
-    res.status(500).json({ error: 'An error occurred while checking the lend status of the book.' });
+  if (index !== -1) {
+    borrowers[index] = { borrowerId, ...updatedBorrower };
+    writeBorrowers(borrowers);
+    res.status(200).json(borrowers[index]);
+  } else {
+    res.status(404).send('Borrower not found');
   }
 });
+
+// 删除借阅记录
+app.delete('/api/borrower/:id', async (req, res) => {
+  const borrowerId = parseInt(req.params.id);
+  try {
+    let borrowers = await readBorrowers();
+    const index = borrowers.findIndex(borrower => borrower.borrowerId === borrowerId);
+    if (index === -1) {
+      return res.status(404).json({ error: 'Borrower not found' });
+    }
+
+    // 使用 splice 方法删除找到的借阅记录
+    borrowers.splice(index, 1);
+
+    // 写入更新后的数据
+    await writeBorrowers(borrowers);
+
+    res.status(200).json({ message: `Borrower with ID ${borrowerId} deleted successfully.` });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 
 // 启动服务器
