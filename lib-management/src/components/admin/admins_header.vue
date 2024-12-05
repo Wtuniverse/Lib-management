@@ -23,7 +23,7 @@
       <template #title>Modify Password</template>
     </el-menu-item></RouterLink>
     <el-menu-item index="5" @click="showUsernameDialog = true">
-      <template #title>{{admin.username}}</template>
+      <template #title>{{admin}}</template>
     </el-menu-item>
     <el-menu-item index="6" @click="handleLogout">
       <template #title>Log Out</template>
@@ -36,19 +36,23 @@
     v-model="showUsernameDialog"
     width="30%"
   >
-    <p>Username: {{ admin.username }}</p>
+    <p>Username: {{admin}}</p>
   </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted} from 'vue'
 import { RouterLink } from 'vue-router';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
 
 const activeIndex = ref('1')
 const router = useRouter()
 const showUsernameDialog = ref(false)
-const admin = ref({ username: '' }) // 示例用户名，实际应用中应从状态管理或 API 获取
+const admin = ref('') // 示例用户名，实际应用中应从状态管理或 API 获取
+const token = localStorage.getItem('jwt');  // Make sure to set token after login
+
 
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
@@ -63,13 +67,28 @@ const handleLogout = () => {
   router.push({ name: 'index' }) // 使用路由的名称进行重定向
 }
 
+
+const fetchUsername = async () => {
+  if (!token) {
+    console.error('No token found');
+    return;
+  }
+
+  try {
+    const response = await axios.get('http://localhost:5000/api/admin/current_user', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    admin.value = response.data.username;  // Set the username upon successful API call
+  } catch (error) {
+    console.error('Failed to fetch username:');
+  }
+};
 // 在组件挂载时从 localStorage 获取用户信息
 onMounted(() => {
-  const user = localStorage.getItem('user')
-  if (user) {
-    admin.value = JSON.parse(user)
-  }
-  console.log(admin)
+  fetchUsername();
+  console.log(admin.value)
 })
 
 </script>

@@ -86,9 +86,8 @@ export default {
               ...(isRegister.value && { securityCode: form.value.securityCode }),
             });
             ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
-            // 将用户信息存储到 localStorage
-            const user = response.data;
-            localStorage.setItem('user', JSON.stringify(user));
+            const token = response.data.token;
+            localStorage.setItem('jwt', token); // 保存JWT到本地存储
             router.push({ name: 'admin' });
           } catch (error) {
             ElMessage.error(error.response?.data || 'An error occurred');
