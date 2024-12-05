@@ -126,11 +126,13 @@ export default {
     const returnDate = ref(null);
 
     const fetchBooks = async () => {
-      books.value = [
-        { bookId: 1, name: 'Java编程思想', author: 'Bruce Eckel', publish: '人民邮电出版社', isbn: '9787115331423', price: '99.00', number: '50' },
-        { bookId: 2, name: '深入理解计算机系统', author: 'Randal E. Bryant', publish: '清华大学出版社', isbn: '9787302513940', price: '129.00', number: '30' },
-        // 更多图书数据...
-      ];
+      try {
+        const response = await axios.get('http://localhost:5000/api/books');
+        books.value = response.data;
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        alert('An error occurred while fetching the books.');
+      }
     };
 
     const updateSearchWord = (event) => {
