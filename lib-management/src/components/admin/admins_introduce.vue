@@ -20,6 +20,10 @@
     <button class="scroll-button right" @click="scrollRight">→</button>
   </div>
 </template>
+
+
+
+
 <script lang="ts" setup>
 import { ref } from 'vue'
 
