@@ -142,13 +142,23 @@ export default {
       dialogVisible.value = true;
     };
 
-    const showLendModal = (book) => {
-      console.log('value:', lendModalVisible.value);
-      console.log('Lend button clicked for book:', book); // 调试信息
-      selectedBookForLend.value = book;
-      lendModalVisible.value = true;
-      console.log('value:', lendModalVisible.value);
-    };
+    const showLendModal = async (book) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/api/check-lend-status?bookId=${book.bookId}`);
+
+    if (response.data.isLent) {
+      alert('The book is already lent and not returned yet.');
+      return;
+    }
+
+    // 如果没有被借出，设置选中的书籍并显示日期选择器
+    selectedBookForLend.value = book;
+    lendModalVisible.value = true;
+  } catch (error) {
+    console.error('Error checking lend status:', error);
+    alert('An error occurred while checking the lend status of the book.');
+  }
+};
 
     const confirmLend = async () => {
   if (!selectedBookForLend.value || !returnDate.value) {

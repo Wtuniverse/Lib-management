@@ -5,7 +5,6 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -225,7 +224,11 @@ function ensureDataFilesExist() {
   const files = [usersFilePath, adminsFilePath, path.join(__dirname, 'data', 'books.json'), path.join(__dirname, 'data', 'lend_list.json')];
   files.forEach(filePath => {
     if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, JSON.stringify([]));
+      if (filePath.includes('lend_list.json')) {
+        fs.writeFileSync(filePath, JSON.stringify([], null, 2)); // 初始化为空数组
+      } else {
+        fs.writeFileSync(filePath, JSON.stringify([]));
+      }
     }
   });
 }
@@ -233,15 +236,19 @@ function ensureDataFilesExist() {
 ensureDataFilesExist();
 
 // 写入借阅数据
-function writeLendList(lendList) {
+async function writeLendList(lendList) {
   try {
-    fs.writeFileSync(path.join(__dirname, 'data', 'lend_list.json'), JSON.stringify(lendList, null, 2));
+    await fs.promises.writeFile(
+      path.join(__dirname, 'data', 'lend_list.json'),
+      JSON.stringify(lendList, null, 2)
+    );
   } catch (error) {
     console.error('Error writing to lend_list.json file:', error);
+    throw error; // 抛出错误，让调用者知道发生了什么
   }
 }
 
-app.post('/api/lend', async (req, res) => {
+app.post('/api/lend',async (req, res) => {
   const { bookId, lendDate, returnDate } = req.body;
 
   let lendList = readLendList();
@@ -256,6 +263,46 @@ app.post('/api/lend', async (req, res) => {
 
   res.status(201).json({ message: 'Book lent successfully!', lendRecord: newLendRecord });
 });
+
+async function hasUnreturnedLend(bookId) {
+  const lendList = readLendList();
+  const now = new Date().toISOString().split('T')[0]; // 获取当前日期并格式化为 YYYY-MM-DD
+
+  const unreturned = lendList.some(record =>
+    record.bookId === bookId &&
+    (!record.returnDate || isAfter(record.returnDate, now))
+  );
+
+  console.log('Checking for unreturned lends:', { bookId, now, result: unreturned });
+  return unreturned;
+}
+
+// 添加一个新的路由来检查书籍借阅状态
+app.get('/api/check-lend-status', async (req, res) => {
+  const { bookId } = req.query;
+
+  if (!bookId) {
+    return res.status(400).json({ error: 'Book ID is required.' });
+  }
+
+  try {
+    // 这里假设 readLendList() 函数从 JSON 文件读取借阅列表
+    const lendList = readLendList();
+    const now = new Date().toISOString().split('T')[0]; // 获取当前日期并格式化为 YYYY-MM-DD
+
+    // 查找是否有未归还的记录
+    const hasUnreturned = lendList.some(record =>
+      record.bookId === parseInt(bookId) && // 确保 bookId 是数字类型
+      (!record.returnDate || new Date(record.returnDate) > new Date(now))
+    );
+
+    res.json({ isLent: hasUnreturned });
+  } catch (error) {
+    console.error('Error checking lend status:', error);
+    res.status(500).json({ error: 'An error occurred while checking the lend status of the book.' });
+  }
+});
+
 
 
 
