@@ -10,5 +10,11 @@
     "lendDate": "2024-12-05",
     "returnDate": "2024-12-19",
     "username": "kzy"
+  },
+  {
+    "bookId": 1,
+    "lendDate": "2024-12-05",
+    "returnDate": "2024-12-10",
+    "username": "zb"
   }
 ]

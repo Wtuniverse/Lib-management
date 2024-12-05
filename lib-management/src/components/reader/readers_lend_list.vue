@@ -36,6 +36,10 @@
 import { ref, onMounted } from 'vue';
 import { ElAlert, ElTable, ElTableColumn, ElCard } from 'element-plus';
 import 'element-plus/dist/index.css';
+import axios from 'axios';
+import router from '@/router';
+
+
 const username = ref('');  // State for storing the username
 const token = localStorage.getItem('jwt');  // Make sure to set token after login
 
