@@ -98,7 +98,7 @@ import {
   ElCol,
   ElDatePicker // 添加这一行以注册 ElDatePicker 组件
 } from 'element-plus';
-
+import axios from 'axios';
 export default {
   name: 'BookManagement',
   components: {
@@ -150,46 +150,41 @@ export default {
       console.log('value:', lendModalVisible.value);
     };
 
+    const confirmLend = async () => {
+  if (!selectedBookForLend.value || !returnDate.value) {
+    alert('Please select a book and return date.');
+    return;
+  }
+  console.log(returnDate.value)
+
+  // 获取当前日期作为借出日期并转换为 UTC 字符串格式
+  const lendDate = new Date().toISOString().split('T')[0];
+
+  // 将用户选择的还书日期转换为 UTC 字符串格式
+  const returnDateUTC = new Date(returnDate.value.getTime() - returnDate.value.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split('T')[0];
+
+  console.log(returnDateUTC)
+  try {
+    const response = await axios.post('http://localhost:5000/api/lend', {
+      bookId: selectedBookForLend.value.bookId,
+      lendDate: lendDate,
+      returnDate: returnDateUTC
+    });
+    console.log('Lend successful:', response.data);
+    lendModalVisible.value = false; // 关闭借阅模态框
+  } catch (error) {
+    console.error('Error lending book:', error);
+  }
+};
+
     const onDateSelected = (date) => {
       console.log('Selected return date:', date);
     };
 
-    const confirmLend = async () => {
-      if (!returnDate.value) {
-        alert('Please select a return date.');
-        return;
-      }
 
-      try {
-        // 构造要发送的数据对象
-        const userId = "CURRENT_USER_ID";
-        const bookId = selectedBookForLend.value.bookId;
-        const bookName = selectedBookForLend.value.name;
-        const lendTime = new Date().toISOString().split('T')[0]; // 获取当前日期
-        const returnTime = returnDate.value.toISOString().split('T')[0];
 
-        // 发送POST请求到后端API
-        const response = await axios.post('/api/lendBook', {
-          userId,
-          bookId,
-          bookName,
-          lendTime,
-          returnTime
-        });
-
-        console.log('Book lent successfully:', response.data);
-        alert('Book lent successfully!');
-
-        // 关闭弹出框并清空已选书籍和日期
-        lendModalVisible.value = false;
-        selectedBookForLend.value = null;
-        returnDate.value = null;
-
-      } catch (error) {
-        console.error('Error lending book:', error.response ? error.response.data : error.message);
-        alert('Failed to lend the book. Please try again.');
-      }
-    };
 
     onMounted(() => {
       fetchBooks();

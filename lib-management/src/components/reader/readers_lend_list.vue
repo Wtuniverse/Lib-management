@@ -17,10 +17,9 @@
         <span>My lend list</span>
       </div>
       <el-table :data="loanLogs" style="width: 100%" stripe>
-        <el-table-column label="User ID" prop="userId" />
         <el-table-column label="Book ID" prop="bookId" />
-        <el-table-column label="Lend Date" prop="lendTime" />
-        <el-table-column label="Return Date" prop="returnTime" />
+        <el-table-column label="Lend Date" prop="lendDate" />
+        <el-table-column label="Return Date" prop="returnDate" />
         <el-table-column label="Situation">
           <template #default="{ row }">
             <span v-if="!row.returnTime">Lending</span>

@@ -1,14 +1,7 @@
 [
   {
-    "userId": "1",
-    "bookId": "1",
-    "lendTime": "2023-01-01",
-    "returnTime": "2023-01-15"
-  },
-  {
-    "userId": "2",
-    "bookId": "2",
-    "lendTime": "2023-01-02",
-    "returnTime": "2023-01-16"
+    "bookId": 1,
+    "lendDate": "2024-12-05",
+    "returnDate": "2024-12-07"
   }
 ]

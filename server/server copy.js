@@ -230,16 +230,9 @@ function ensureDataFilesExist() {
   });
 }
 
-
-
 ensureDataFilesExist();
 
-// 测试读取 lend_list.json 文件
-const lendList = readLendList();
-console.log('Lend list:', lendList);
-
-
-// 写入借阅列表数据
+// 写入借阅数据
 function writeLendList(lendList) {
   try {
     fs.writeFileSync(path.join(__dirname, 'data', 'lend_list.json'), JSON.stringify(lendList, null, 2));
@@ -248,42 +241,23 @@ function writeLendList(lendList) {
   }
 }
 
-// 路由：借书
-app.post('/api/lendBook', authenticateToken, async (req, res) => {
-  const { userId, bookId, bookName, lendTime, returnTime } = req.body;
+app.post('/api/lend', async (req, res) => {
+  const { bookId, lendDate, returnDate } = req.body;
 
-  // 确保所有必要的参数都存在
-  if (!userId || !bookId || !lendTime || !returnTime) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  const lendList = readLendList();
-
-  // 检查是否该用户已经借了这本书
-  const existingRecord = lendList.find(record => record.userId === userId && record.bookId === bookId && record.returned === false);
-  if (existingRecord) {
-    return res.status(400).json({ message: 'You have already borrowed this book and not returned it yet.' });
-  }
-
-  // 创建新的借阅记录
+  let lendList = readLendList();
   const newLendRecord = {
-    userId,
     bookId,
-    bookName,
-    lendTime,
-    returnTime,
-    returned: false // 添加一个字段以跟踪书籍是否已归还
+    lendDate,
+    returnDate,
   };
 
-  // 将新记录添加到借阅列表中
   lendList.push(newLendRecord);
-
-  // 更新lend_list.json文件
   writeLendList(lendList);
 
-  // 返回成功响应
-  res.status(201).json({ message: 'Book lent successfully', lendRecord: newLendRecord });
+  res.status(201).json({ message: 'Book lent successfully!', lendRecord: newLendRecord });
 });
+
+
 
 // 启动服务器
 app.listen(5000, () => {
