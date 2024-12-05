@@ -6,9 +6,11 @@
     :ellipsis="false"
     @select="handleSelect"
   >
-    <el-menu-item index="0">
-      Library Management System
-    </el-menu-item>
+    <RouterLink to="/admin/introduce">
+      <el-menu-item index="1">
+        <template #title>Library Management System</template>
+      </el-menu-item>
+    </RouterLink>
     <el-sub-menu index="1">
       <template #title>Book Mangment</template>
       <RouterLink to="/admin/book"><el-menu-item index="1-1">All Books</el-menu-item></RouterLink>
