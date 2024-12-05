@@ -124,6 +124,29 @@ export default {
     const lendModalVisible = ref(false);
     const selectedBookForLend = ref(null);
     const returnDate = ref(null);
+    const token = localStorage.getItem('jwt');  // Make sure to set token after login
+    const username = ref('');  // State for storing the username
+
+
+
+    const fetchUsername = async () => {
+  if (!token) {
+        console.error('No token found');
+        return;
+      }
+
+      try {
+        const response = await axios.get('http://localhost:5000/api/user/current_user', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        username.value = response.data.username;  // Set the username upon successful API call
+      } catch (error) {
+        console.error('Failed to fetch username:');
+      }
+    };
+
 
     const fetchBooks = async () => {
       try {
@@ -182,7 +205,8 @@ export default {
     const response = await axios.post('http://localhost:5000/api/lend', {
       bookId: selectedBookForLend.value.bookId,
       lendDate: lendDate,
-      returnDate: returnDateUTC
+      returnDate: returnDateUTC,
+      username: username.value
     });
     console.log('Lend successful:', response.data);
     lendModalVisible.value = false; // 关闭借阅模态框
@@ -200,6 +224,7 @@ export default {
 
     onMounted(() => {
       fetchBooks();
+      fetchUsername();  // Fetch username when the component is mounted
     });
 
     return {

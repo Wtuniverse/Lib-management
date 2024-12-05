@@ -36,6 +36,9 @@
 import { ref, onMounted } from 'vue';
 import { ElAlert, ElTable, ElTableColumn, ElCard } from 'element-plus';
 import 'element-plus/dist/index.css';
+const username = ref('');  // State for storing the username
+const token = localStorage.getItem('jwt');  // Make sure to set token after login
+
 
 export default {
   name: 'LoanLog',
@@ -52,38 +55,68 @@ export default {
       return currentTime - lendDate > loanPeriod;
     };
 
-    // 动态加载头部内容
-    onMounted(async () => {
-      const header = document.querySelector('#header');
-      if (header) {
-        header.innerHTML = '<h1>Lend Lists</h1>';
+
+
+
+
+
+// Function to fetch username from the backend
+const fetchUsername = async () => {
+  if (!token) {
+    console.error('No token found');
+    return;
+  }
+
+  try {
+    const response = await axios.get('http://localhost:5000/api/user/current_user', {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-      await loadLoanLogs();
     });
-
-    // 加载借还日志
-    const loadLoanLogs = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/lend_list');
-        console.log(response)
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        loanLogs.value = data;
-      } catch (error) {
-        console.error('Error fetching lend list:', error);
-        errorMessage.value = 'Failed to load loan logs.';
-      }
-    };
+    username.value = response.data.username;  // Set the username upon successful API call
+  } catch (error) {
+    console.error('Failed to fetch username:');
+  }
+};
 
 
-    return {
-      loanLogs,
-      isOverdue,
-      errorMessage,
-    };
-  },
+// 加载借还日志
+const loadLoanLogs = async () => {
+  if (!username) {
+    console.error('Username is required to fetch loan logs.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/lend_list?username=${username.value}`);
+    console.log(response);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    loanLogs.value = data;  // Assuming loanLogs is a ref or reactive variable
+  } catch (error) {
+    console.error('Error fetching lend list:', error);
+    errorMessage.value = 'Failed to load loan logs.';
+  }
+};
+
+    // 动态加载头部内容
+onMounted(async () => {
+  const header = document.querySelector('#header');
+  if (header) {
+    header.innerHTML = '<h1>Lend Lists</h1>';
+  }
+  fetchUsername();  // Fetch username when the component is mounted
+  await loadLoanLogs();
+});
+
+return {
+  loanLogs,
+  isOverdue,
+  errorMessage,
+};
+},
 };
 </script>
 

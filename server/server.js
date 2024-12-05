@@ -352,10 +352,17 @@ function readLendList() {
 
 // 路由：获取lend_list.json文件的内容
 app.get('/api/lend_list', (req, res) => {
-  console.log('Fetching lend list...');
-  const lendList = readLendList();
+  const { username } = req.query;  // 从查询参数中获取用户名
+  console.log('Fetching lend list for username:', username);
+
+  const lendList = readLendList();  // 假设这是您读取借阅日志的函数
   console.log('Lend list:', lendList); // 打印借阅列表到控制台
-  res.json(lendList);
+
+  // 根据用户名过滤借阅日志
+  const filteredLendList = lendList.filter(log => log.username === username);
+
+  console.log('Filtered lend list:', filteredLendList); // 打印过滤后的借阅列表到控制台
+  res.json(filteredLendList); // 返回过滤后的借阅列表
 });
 
 
@@ -390,13 +397,14 @@ async function writeLendList(lendList) {
 
 
 app.post('/api/lend',async (req, res) => {
-  const { bookId, lendDate, returnDate } = req.body;
+  const { bookId, lendDate, returnDate, username } = req.body;
 
   let lendList = readLendList();
   const newLendRecord = {
     bookId,
     lendDate,
     returnDate,
+    username
   };
 
   lendList.push(newLendRecord);
