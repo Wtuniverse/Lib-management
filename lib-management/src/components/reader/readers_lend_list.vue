@@ -111,7 +111,7 @@ onMounted(async () => {
   if (header) {
     header.innerHTML = '<h1>Lend Lists</h1>';
   }
-  fetchUsername();  // Fetch username when the component is mounted
+  await fetchUsername();  // Fetch username when the component is mounted
   await loadLoanLogs();
 });
 
