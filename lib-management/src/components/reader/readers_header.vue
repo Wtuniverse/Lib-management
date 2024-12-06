@@ -8,7 +8,7 @@
   >
 
     <RouterLink to="/reader/introduce">
-        <el-menu-item index="1">
+        <el-menu-item index="0">
           <template #title> Welcome To Library System</template>
         </el-menu-item>
     </RouterLink>
