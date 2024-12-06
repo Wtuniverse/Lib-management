@@ -94,7 +94,7 @@ export default {
 
             ElMessage.success(isRegister.value ? 'Registration successful!' : 'Login successful!');
             // 登录或注册成功后的页面跳转
-            router.push({ name: 'reader' }); // 跳转到主页
+            router.push({ path: 'reader/introduce' }); // 跳转到主页
           } catch (error) {
             ElMessage.error(error.response?.data || 'An error occurred');
           } finally {

@@ -24,6 +24,10 @@ const router = createRouter({
     {
       path:'book',
       component: () => import('../components/reader/readers_books.vue')
+    },
+    {
+      path:'introduce',
+      component: () => import('../components/reader/readers_introduce.vue')
     }]
     },
     {
