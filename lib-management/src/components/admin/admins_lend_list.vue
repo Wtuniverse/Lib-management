@@ -30,16 +30,15 @@
         <span>My Borrowed Books</span>
       </div>
       <el-table :data="loanLogs" style="width: 100%" stripe>
-        <el-table-column label="Borrow ID" prop="borrowerId" />
-        <el-table-column label="Reader ID" prop="readerId" />
         <el-table-column label="Book ID" prop="bookId" />
+        <el-table-column label="Book Name" prop="name" />
         <el-table-column label="Lend Date" prop="lendDate" />
-        <el-table-column label="Back Date" prop="backDate" />
+        <el-table-column label="Back Date" prop="returnDate" />
         <el-table-column label="Situation">
           <template #default="{ row }">
-            <span v-if="!row.backDate">Lending</span>
+            <span v-if="!row.returnDate">Lending</span>
             <span v-else>Returned</span>
-            <span v-if="!row.backDate && isOverdue(row)">/ Overdue</span>
+            <span v-if="!row.returnDate && isOverdue(row)">/ Overdue</span>
           </template>
         </el-table-column>
         <el-table-column label="Actions">
@@ -79,7 +78,7 @@ export default {
     // 删除记录
     const deleteRecord = async (row) => {
       try {
-        const response = await fetch(`http://localhost:5000/api/borrower/${row.borrowerId}`, {
+        const response = await fetch(`http://localhost:5000/api/lend_list/${row.bookId}`, {
           method: 'DELETE'
         });
 
@@ -98,7 +97,7 @@ export default {
      // 从后端获取数据
      const fetchLoanLogs = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/borrower'); // 替换为你的后端 URL
+        const response = await fetch('http://localhost:5000/api/lend_list'); // 替换为你的后端 URL
         loanLogs.value =  await response.json();
         successMessage.value = 'Data loaded successfully!';
       } catch (error) {
@@ -110,7 +109,7 @@ export default {
     onMounted(() => {
       const header = document.querySelector('#header');
       if (header) {
-        header.innerHTML = '<h1>My Borrowed Books</h1>';
+        header.innerHTML = '<h1>All Borrowed Books</h1>';
       }
       // 调用获取数据的函数
       fetchLoanLogs();

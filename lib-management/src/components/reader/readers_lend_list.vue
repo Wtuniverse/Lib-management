@@ -18,6 +18,7 @@
       </div>
       <el-table :data="loanLogs" style="width: 100%" stripe>
         <el-table-column label="Book ID" prop="bookId" />
+        <el-table-column label="Book Name" prop="name" />
         <el-table-column label="Lend Date" prop="lendDate" />
         <el-table-column label="Return Date" prop="returnDate" />
         <el-table-column label="Situation">

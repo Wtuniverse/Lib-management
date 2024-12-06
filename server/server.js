@@ -233,7 +233,7 @@ app.delete('/api/books/:id', async (req, res) => {
   }
 });
 
-const BORROWER_FILE = path.join(__dirname, 'data', 'borrower.json');
+const BORROWER_FILE = path.join(__dirname, 'data', 'lend_list.json');
 
 // 读取借阅记录数据
 function readBorrowers() {
@@ -257,27 +257,27 @@ function writeBorrowers(borrowers) {
 
 // 检查借阅记录是否存在
 app.get('/api/check-borrower', (req, res) => {
-  const borrowerId = req.query.borrowerId;
+  const borrowerId = req.query.bookId;
   const borrowers = readBorrowers();
-  const isBorrowerExists = borrowers.some(borrower => borrower.borrowerId === borrowerId);
+  const isBorrowerExists = borrowers.some(borrower => borrower.bookId === borrowerId);
   res.json({ exists: isBorrowerExists });
   });
 
 // 添加借阅记录
-app.post('/api/borrower', (req, res) => {
+app.post('/api/lend_list', (req, res) => {
   const newBorrower = req.body;
 
   // 读取现有借阅记录数据
   let borrowers = readBorrowers();
 
   // 检查 borrowerId 是否已存在
-  const isBorrowerExists = borrowers.some(borrower => borrower.borrowerId === newBorrower.borrowerId);
+  const isBorrowerExists = borrowers.some(borrower => borrower.bookId === newBorrower.bookId);
   if (isBorrowerExists) {
     return res.status(400).json({ error: 'Borrower ID already exists' });
   }
 
   // 生成一个新的 borrowerId
-  const newBorrowerId = borrowers.length > 0 ? borrowers[borrowers.length - 1].borrowerId + 1 : 1;
+  const newBorrowerId = borrowers.length > 0 ? borrowers[borrowers.length - 1].bookId + 1 : 1;
   newBorrower.borrowerId = newBorrowerId;
 
   // 添加新的借阅记录
@@ -293,20 +293,20 @@ app.post('/api/borrower', (req, res) => {
 
 
 // 获取所有借阅记录
-app.get('/api/borrower', (req, res) => {
+app.get('/api/lend_list', (req, res) => {
   const borrowers = readBorrowers();
   res.json(borrowers);
 });
 
 // 更新借阅记录
-app.put('/api/borrower/:id', (req, res) => {
+app.put('/api/book/:id', (req, res) => {
   const borrowerId = parseInt(req.params.id);
   const updatedBorrower = req.body;
   let borrowers = readBorrowers();
-  const index = borrowers.findIndex(borrower => borrower.borrowerId === borrowerId);
+  const index = borrowers.findIndex(borrower => borrower.bookId === bookId);
 
   if (index !== -1) {
-    borrowers[index] = { borrowerId, ...updatedBorrower };
+    borrowers[index] = { bookrId, ...updatedBorrower };
     writeBorrowers(borrowers);
     res.status(200).json(borrowers[index]);
   } else {
@@ -315,11 +315,11 @@ app.put('/api/borrower/:id', (req, res) => {
 });
 
 // 删除借阅记录
-app.delete('/api/borrower/:id', async (req, res) => {
+app.delete('/api/lend_list/:id', async (req, res) => {
   const borrowerId = parseInt(req.params.id);
   try {
     let borrowers = await readBorrowers();
-    const index = borrowers.findIndex(borrower => borrower.borrowerId === borrowerId);
+    const index = borrowers.findIndex(borrower => borrower.bookId === borrowerId);
     if (index === -1) {
       return res.status(404).json({ error: 'Borrower not found' });
     }
