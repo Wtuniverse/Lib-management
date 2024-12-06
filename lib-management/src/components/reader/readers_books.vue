@@ -9,7 +9,7 @@
             placeholder="Send a book name"
             v-model="searchWord"
             clearable
-            @input="updateSearchWord"
+            @input="searchBooks"
             class="input-search"
           />
         </el-col>
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed} from 'vue';
 import {
   ElTable,
   ElTableColumn,
@@ -119,6 +119,12 @@ export default {
   setup() {
     const searchWord = ref('');
     const books = ref([]);
+    const filteredBooks = computed(() => {
+      if (!searchWord.value) return books.value;
+      return books.value.filter(book =>
+        book.name.toLowerCase().includes(searchWord.value.toLowerCase())
+      );
+    });
     const dialogVisible = ref(false);
     const selectedBook = ref({});
     const lendModalVisible = ref(false);
@@ -126,6 +132,11 @@ export default {
     const returnDate = ref(null);
     const token = localStorage.getItem('jwt');  // Make sure to set token after login
     const username = ref('');  // State for storing the username
+
+    const searchBooks = () => {
+      // 这里可以根据关键字过滤图书
+      //fetchBooks(); // 这里只是模拟刷新
+    };
 
 
 
@@ -229,7 +240,8 @@ export default {
 
     return {
       searchWord,
-      books,
+      searchBooks,
+      books: filteredBooks,
       dialogVisible,
       selectedBook,
       updateSearchWord,

@@ -93,7 +93,7 @@ const loadLoanLogs = async () => {
   }
 
   try {
-    const response = await fetch(`http://localhost:5000/api/lend_list?username=${username.value}`);
+    const response = await fetch(`http://localhost:5000/api/user_lend_list?username=${username.value}`);
     console.log(response);
     if (!response.ok) {
       throw new Error('Network response was not ok');

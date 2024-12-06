@@ -351,7 +351,7 @@ function readLendList() {
 }
 
 // 路由：获取lend_list.json文件的内容
-app.get('/api/lend_list', (req, res) => {
+app.get('/api/user_lend_list', (req, res) => {
   const { username } = req.query;  // 从查询参数中获取用户名
   console.log('Fetching lend list for username:', username);
 
