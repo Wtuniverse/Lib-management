@@ -16,16 +16,16 @@
       <div slot="header">
         <span>My lend list</span>
       </div>
-      <el-table :data="loanLogs" style="width: 100%" stripe>
+      <el-table :data="loanLogs" style="width: 1100px" stripe>
         <el-table-column label="Book ID" prop="bookId" />
         <el-table-column label="Book Name" prop="bookname" />
         <el-table-column label="Lend Date" prop="lendDate" />
         <el-table-column label="Promised Return Date" prop="returnDate" />
         <el-table-column label="Situation">
           <template #default="{ row }">
-            <span v-if="!row.returnTime">Lending</span>
-            <span v-else>Returned</span>
-            <span v-if="!row.returnTime && isOverdue(row)">/ Overdue</span>
+            
+            <span v-if="!row.returnTime || isOverdue(row)">Overdue</span>
+            <span v-else>Lending</span>
           </template>
         </el-table-column>
       </el-table>
@@ -37,6 +37,7 @@
 import { ref, onMounted } from 'vue';
 import { ElAlert, ElTable, ElTableColumn, ElCard } from 'element-plus';
 import 'element-plus/dist/index.css';
+import dayjs from 'dayjs';  // 引入 dayjs 库
 import axios from 'axios';
 import router from '@/router';
 
@@ -51,13 +52,12 @@ export default {
     const loanLogs = ref([]);
     const errorMessage = ref('');
 
-    // 判断是否超期
-    const isOverdue = (log) => {
-      const currentTime = new Date().getTime();
-      const lendDate = new Date(log.lendTime).getTime();
-      const loanPeriod = 30 * 24 * 60 * 60 * 1000; // 假设借期为30天
-
-      return currentTime - lendDate > loanPeriod;
+     // 判断是否超期
+     const isOverdue = (log) => {
+      const currentTime = dayjs();
+      const lendDate = dayjs(log.returnDate);
+      const loanPeriod = 0; // 假设借期为30天
+      return currentTime.diff(lendDate, 'day') > loanPeriod;
     };
 
 
