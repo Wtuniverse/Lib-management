@@ -14,7 +14,7 @@
     </RouterLink>
     <RouterLink to="/reader/book">
       <el-menu-item index="1">
-        <template #title>Searching Books</template>
+        <template #title>Books</template>
       </el-menu-item>
     </RouterLink>
     <RouterLink to="/reader/lendlist">

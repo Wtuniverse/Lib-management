@@ -8,5 +8,10 @@
     "username": "kzy",
     "password": "$2b$10$EsXmRE052G07X8bJYydUxOabdeUfkCaoMyq5Dyukdm5g.6J7evwae",
     "securityCode": "12345678"
+  },
+  {
+    "username": "zb",
+    "password": "$2b$10$MnPHcYKwHIMOSW/QjTubNO1iaGHIPQF.ecbrjbaNsxd7FIwM5pxaW",
+    "securityCode": "12345678"
   }
 ]

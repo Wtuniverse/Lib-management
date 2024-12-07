@@ -99,6 +99,8 @@ import {
   ElDatePicker // 添加这一行以注册 ElDatePicker 组件
 } from 'element-plus';
 import axios from 'axios';
+import dayjs from 'dayjs';  // 引入 dayjs 库
+
 export default {
   name: 'BookManagement',
   components: {
@@ -139,8 +141,7 @@ export default {
     };
 
 
-
-    const fetchUsername = async () => {
+const fetchUsername = async () => {
   if (!token) {
         console.error('No token found');
         return;
@@ -156,33 +157,33 @@ export default {
       } catch (error) {
         console.error('Failed to fetch username:');
       }
-    };
+  };
 
 
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/books');
-        books.value = response.data;
-      } catch (error) {
-        console.error('Error fetching books:', error);
-        alert('An error occurred while fetching the books.');
-      }
-    };
+const fetchBooks = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/books');
+      books.value = response.data;
+    } catch (error) {
+      console.error('Error fetching books:', error);
+      alert('An error occurred while fetching the books.');
+    }
+};
 
-    const updateSearchWord = (event) => {
+const updateSearchWord = (event) => {
       searchWord.value = event.target.value;
-    };
+};
 
-    const viewDetails = (row) => {
+const viewDetails = (row) => {
       selectedBook.value = { ...row };
       dialogVisible.value = true;
-    };
+};
 
-    const showLendModal = async (book) => {
+const showLendModal = async (book) => {
   try {
     const response = await axios.get(`http://localhost:5000/api/check-lend-status?bookId=${book.bookId}`);
 
-    if (response.data.isLent) {
+    if (response.data.isLent)  {
       alert('The book is already lent and not returned yet.');
       return;
     }
@@ -190,6 +191,7 @@ export default {
     // 如果没有被借出，设置选中的书籍并显示日期选择器
     selectedBookForLend.value = book;
     lendModalVisible.value = true;
+
   } catch (error) {
     console.error('Error checking lend status:', error);
     alert('An error occurred while checking the lend status of the book.');
@@ -198,9 +200,11 @@ export default {
 
     const confirmLend = async () => {
   if (!selectedBookForLend.value || !returnDate.value) {
-    alert('Please select a book and return date.');
+    alert('Please choose the date on which you promise to return the book.');
     return;
   }
+
+
   console.log(returnDate.value)
 
   // 获取当前日期作为借出日期并转换为 UTC 字符串格式
@@ -212,6 +216,12 @@ export default {
     .split('T')[0];
 
   console.log(returnDateUTC)
+
+    // 检查还书日期是否早于借出日期
+  if (returnDateUTC < lendDate) {
+    alert('The return date cannot be earlier than the lend date.');
+    return;
+  }
   try {
     const response = await axios.post('http://localhost:5000/api/lend', {
       bookId: selectedBookForLend.value.bookId,

@@ -29,7 +29,7 @@
       <div slot="header">
         <span>All Borrowed Books</span>
       </div>
-      <el-table :data="loanLogs" style="width: 1100px" stripe>
+      <el-table :data="loanLogs" style="width: 800px" stripe>
         <el-table-column label="Book ID" prop="bookId" />
         <el-table-column label="Book Name" prop="bookname" />
         <el-table-column label="Borrower" prop="username" />
@@ -37,7 +37,7 @@
         <el-table-column label="Promised Back Date" prop="returnDate" />
         <el-table-column label="Situation">
           <template #default="{ row }">
-            
+
             <span v-if="!row.returnDate || isOverdue(row)">Overdue</span>
             <span v-else>Lending</span>
           </template>
@@ -72,7 +72,7 @@ export default {
     const isOverdue = (log) => {
       const currentTime = dayjs();
       const lendDate = dayjs(log.returnDate);
-      const loanPeriod = 0; 
+      const loanPeriod = 0;
       return currentTime.diff(lendDate, 'day') > loanPeriod;
     };
 

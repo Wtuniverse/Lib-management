@@ -16,15 +16,15 @@
       <div slot="header">
         <span>My lend list</span>
       </div>
-      <el-table :data="loanLogs" style="width: 1100px" stripe>
+      <el-table :data="loanLogs" style="width: 800px" stripe>
         <el-table-column label="Book ID" prop="bookId" />
         <el-table-column label="Book Name" prop="bookname" />
         <el-table-column label="Lend Date" prop="lendDate" />
         <el-table-column label="Promised Return Date" prop="returnDate" />
         <el-table-column label="Situation">
           <template #default="{ row }">
-            
-            <span v-if="!row.returnTime || isOverdue(row)">Overdue</span>
+
+            <span v-if=" isOverdue(row)">Overdue</span>
             <span v-else>Lending</span>
           </template>
         </el-table-column>

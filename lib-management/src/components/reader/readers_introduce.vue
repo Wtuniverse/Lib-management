@@ -29,7 +29,7 @@ import { ref } from 'vue'
 
 const sections = ref([
   {
-    title: 'Book searching',
+    title: 'Books',
     content: ['Search for the desired book and borrow it ']
   },
   {
