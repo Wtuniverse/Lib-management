@@ -31,8 +31,8 @@
       </div>
       <el-table :data="loanLogs" style="width: 100%" stripe>
         <el-table-column label="Book ID" prop="bookId" />
-        <el-table-column label="Book Name" prop="name" />
-        <el-table-column label="User" prop="username" />
+        <el-table-column label="Book Name" prop="bookname" />
+        <el-table-column label="Borrower" prop="username" />
         <el-table-column label="Lend Date" prop="lendDate" />
         <el-table-column label="Back Date" prop="returnDate" />
         <el-table-column label="Situation">

@@ -330,6 +330,13 @@ app.delete('/api/lend_list/:id', async (req, res) => {
     // 写入更新后的数据
     await writeBorrowers(borrowers);
 
+    let books = await readBooks();
+    const bookIndex = books.findIndex(book => book.bookId === borrowerId);
+    if (bookIndex !== -1 && books[bookIndex].number >= 0) {
+      books[bookIndex].number += 1; // 增加书籍数量
+      await writeBooks(books);
+    }
+
     res.status(200).json({ message: `Borrower with ID ${borrowerId} deleted successfully.` });
 
   } catch (error) {
@@ -396,21 +403,35 @@ async function writeLendList(lendList) {
 }
 
 
-app.post('/api/lend',async (req, res) => {
-  const { bookId, lendDate, returnDate, username } = req.body;
+
+app.post('/api/lend', async (req, res) => {
+  const { bookId, bookname, lendDate, returnDate, username } = req.body;
 
   let lendList = readLendList();
   const newLendRecord = {
     bookId,
+    bookname,
     lendDate,
     returnDate,
     username
   };
 
-  lendList.push(newLendRecord);
-  writeLendList(lendList);
+  let books = readBooks();
+  const bookIndex = books.findIndex(book => book.bookId === bookId);
 
-  res.status(201).json({ message: 'Book lent successfully!', lendRecord: newLendRecord });
+  // Check if the book exists and has a number greater than 0
+  if (bookIndex !== -1 && books[bookIndex].number > 0) {
+    lendList.push(newLendRecord);
+    writeLendList(lendList);
+
+    books[bookIndex].number -= 1; // Decrease the number of available books
+    writeBooks(books);
+
+    res.status(201).json({ message: 'Book lent successfully!', lendRecord: newLendRecord });
+  } else {
+    // If the book does not exist or the number is less than or equal to 0, return an error
+    res.status(400).json({ message: 'Book not available for lending.' });
+  }
 });
 
 async function hasUnreturnedLend(bookId) {

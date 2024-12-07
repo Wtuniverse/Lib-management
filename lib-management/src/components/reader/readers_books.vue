@@ -215,11 +215,12 @@ export default {
   try {
     const response = await axios.post('http://localhost:5000/api/lend', {
       bookId: selectedBookForLend.value.bookId,
+      bookname: selectedBookForLend.value.name,
       lendDate: lendDate,
       returnDate: returnDateUTC,
       username: username.value
     });
-    console.log('Lend successful:', response.data);
+    console.log('Lend successful!');
     lendModalVisible.value = false; // 关闭借阅模态框
   } catch (error) {
     console.error('Error lending book:', error);
