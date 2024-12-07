@@ -115,8 +115,8 @@ export default {
     const updatedBook = { ...row };
 
     // 假设您会弹出一个输入框来获得书籍的更新信息
-    const name = prompt("Edit Name:", updatedBook.name);
-    if (name) updatedBook.name = name; // 更新书名作为示例
+    const number = prompt("Edit Number:", updatedBook.number);
+    if (number) updatedBook.number = number; // 更新书名作为示例
 
     const response = await fetch(`http://localhost:5000/api/books/${row.bookId}`, {
         method: 'PUT',
@@ -135,17 +135,20 @@ export default {
 
     // 删除图书
     const deleteBook = async (row) => {
-    const response = await fetch(`http://localhost:5000/api/books/${row.bookId}`, {
-        method: 'DELETE'
-    });
+  // 弹出确认对话框
+      const confirmDelete = confirm('Are you sure you want to delete this book?');
+      if (confirmDelete) {
+        const response = await fetch(`http://localhost:5000/api/books/${row.bookId}`, {
+            method: 'DELETE'
+        });
 
-    if (response.ok) {
-        fetchBooks(); // 刷新图书列表
-    } else {
-        alert('Failed to delete book');
-    }
+        if (response.ok) {
+            fetchBooks(); // 刷新图书列表
+        } else {
+            alert('Failed to delete book');
+        }
+      }
 };
-
     // 页面加载时获取图书数据
     onMounted(() => {
       fetchBooks();

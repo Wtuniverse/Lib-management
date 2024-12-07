@@ -20,7 +20,7 @@
         <el-table-column label="Book ID" prop="bookId" />
         <el-table-column label="Book Name" prop="bookname" />
         <el-table-column label="Lend Date" prop="lendDate" />
-        <el-table-column label="Return Date" prop="returnDate" />
+        <el-table-column label="Promised Return Date" prop="returnDate" />
         <el-table-column label="Situation">
           <template #default="{ row }">
             <span v-if="!row.returnTime">Lending</span>
