@@ -76,7 +76,6 @@
           <el-button type="primary" @click="confirmLend">Confirm</el-button>
         </span>
       </el-dialog>
-
     </el-main>
   </el-container>
 </template>
@@ -271,5 +270,13 @@ const showLendModal = async (book) => {
 <style scoped>
 .input-search {
   width: 300px;
+}
+
+.el-header {
+  padding: 30px 0; /* 增加顶部和底部的内边距 */
+}
+
+.el-main {
+  padding-top: 30px; /* 增加顶部的内边距 */
 }
 </style>

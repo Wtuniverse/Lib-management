@@ -172,4 +172,12 @@ export default {
 .input-search {
   width: 300px;
 }
+
+.el-header {
+  padding: 20px 0; /* 增加顶部和底部的内边距 */
+}
+
+.el-main {
+  padding-top: 20px; /* 增加顶部的内边距 */
+}
 </style>
