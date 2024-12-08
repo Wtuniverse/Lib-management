@@ -29,11 +29,11 @@ import { ref } from 'vue'
 
 const sections = ref([
   {
-    title: 'Books',
+    title: 'Books to borrow',
     content: ['Search for the desired book and borrow it ']
   },
   {
-    title: 'My Lending List',
+    title: 'Lending Records',
     content: ['You can see all lend records here']
   },
   {
