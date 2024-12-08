@@ -1,4 +1,5 @@
 <template>
+  <div class="menu-container">
   <el-menu
     :default-active="activeIndex"
     class="el-menu-demo"
@@ -12,16 +13,14 @@
           <template #title> Welcome To Library System</template>
         </el-menu-item>
     </RouterLink>
-    <RouterLink to="/reader/book">
-      <el-menu-item index="1">
-        <template #title>Books</template>
-      </el-menu-item>
-    </RouterLink>
-    <RouterLink to="/reader/lendlist">
-      <el-menu-item index="2">
-        <template #title>My Lending List</template>
-      </el-menu-item>
-    </RouterLink>
+    <el-sub-menu index="1">
+        <template #title>Books to borrow</template>
+        <RouterLink to="/reader/book"><el-menu-item index="1-1">All Books</el-menu-item></RouterLink>
+      </el-sub-menu>
+      <el-sub-menu index="2">
+        <template #title>Lending Records</template>
+        <RouterLink to="/reader/lendlist"><el-menu-item index="3-1"> My Lending List</el-menu-item></RouterLink>
+      </el-sub-menu>
     <RouterLink to="/reader/repassword">
       <el-menu-item index="3">
         <template #title>Modify Password</template>
@@ -36,6 +35,7 @@
       <template #title>Log Out</template>
     </el-menu-item>
   </el-menu>
+</div>
 </template>
 
 <script lang="ts" setup>
@@ -90,7 +90,32 @@ const logout = () => {
 </script>
 
 <style>
-.el-menu--horizontal > .el-menu-item:nth-child(1) {
-  margin-right: auto;
+
+.menu-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  padding: 10px 0; /* 提供顶部和底部的间距 */
+}
+
+.el-menu-demo {
+  width: 100%; /* 让菜单占满整个宽度 */
+}
+
+.el-menu--horizontal {
+  display: flex; /* 使用 Flexbox 进行布局 */
+  justify-content: center; /* 居中对齐菜单项 */
+}
+
+.el-menu--horizontal > .el-menu-item {
+  margin: 0 15px; /* 增加菜单项之间的间距 */
+}
+
+.el-menu--horizontal > .el-sub-menu {
+  margin: 0 15px; /* 增加子菜单项之间的间距 */
+}
+
+.el-menu-item {
+  white-space: nowrap; /* 防止菜单项换行 */
 }
 </style>
