@@ -126,13 +126,15 @@ export default {
   cursor: pointer;
 }
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   background: url('../assets/1706753915154946.jpg') no-repeat center center;
   background-size: cover;
-  width: 1200px;
 }
 .login-content {
   display: flex;
