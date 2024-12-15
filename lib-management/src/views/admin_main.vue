@@ -31,7 +31,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.admin_container{  position: fixed;
+.admin_container{
   top: 0;
   right: 0;
   bottom: 0;
