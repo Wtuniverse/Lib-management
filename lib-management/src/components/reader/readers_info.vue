@@ -66,7 +66,6 @@
 
       <div class="action-buttons" v-if="editMode">
         <el-button type="primary" @click="updateInfo">Save</el-button>
-        <el-button @click="cancelEdit">Cancel</el-button>
       </div>
     </el-card>
   </div>

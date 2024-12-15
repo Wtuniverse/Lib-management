@@ -93,9 +93,9 @@ const logout = () => {
 
 .menu-container {
   display: flex;
-  justify-content: center; /* 水平居中 */
+  justify-content: space-between; /* 水平居中 */
   align-items: center; /* 垂直居中 */
-  padding: 10px 0; /* 提供顶部和底部的间距 */
+  width: 1707px;
 }
 
 .el-menu-demo {
@@ -104,7 +104,7 @@ const logout = () => {
 
 .el-menu--horizontal {
   display: flex; /* 使用 Flexbox 进行布局 */
-  justify-content: center; /* 居中对齐菜单项 */
+  justify-content: space-around;
 }
 
 .el-menu--horizontal > .el-menu-item {
@@ -116,6 +116,7 @@ const logout = () => {
 }
 
 .el-menu-item {
+  width: 200px;
   white-space: nowrap; /* 防止菜单项换行 */
 }
 </style>

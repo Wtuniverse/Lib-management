@@ -1,4 +1,6 @@
 <template>
+ <el-card class="repasswd" shadow="always">
+  <span>Modify Password</span>
   <el-form :model="form" ref="formRef" label-width="120px" @submit.native.prevent="handleSubmit">
     <el-form-item label="Old Password" :rules="oldPasswordRules">
       <el-input
@@ -38,6 +40,7 @@
       <el-button type="primary" @click="handleSubmit">Submit</el-button>
     </el-form-item>
   </el-form>
+ </el-card>
 </template>
 
 <script>
