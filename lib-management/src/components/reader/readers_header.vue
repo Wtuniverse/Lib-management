@@ -28,7 +28,7 @@
     </RouterLink>
     <RouterLink to="/reader/info">
       <el-menu-item index="4">
-        {{ username }}
+        <template #title> {{ username }}</template>
       </el-menu-item>
     </RouterLink>
     <el-menu-item index="5" @click="logout">
