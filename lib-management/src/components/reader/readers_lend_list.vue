@@ -129,6 +129,7 @@ return {
 #header {
   text-align: center;
   margin-bottom: 20px;
+  background-color:rgba(255, 255, 255, 0.8);
 }
 
 .el-alert {

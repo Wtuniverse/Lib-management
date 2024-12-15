@@ -268,6 +268,9 @@ const showLendModal = async (book) => {
 </script>
 
 <style scoped>
+.el-row{
+  background-color:rgba(255, 255, 255, 0.8);
+}
 .input-search {
   width: 300px;
 }
