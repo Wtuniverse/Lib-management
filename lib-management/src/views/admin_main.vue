@@ -32,6 +32,7 @@ export default defineComponent({
 
 <style scoped>
 .admin_container{
+  position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
