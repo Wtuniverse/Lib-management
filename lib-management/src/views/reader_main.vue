@@ -38,6 +38,7 @@ export default {
   width: 100%;
   background: url('..\assets\2564c0c924c4f7bbe1ce45910284ad9d.jpeg') no-repeat center center;
   background-size: cover;
+  position: absolute;
 }
 .content {
   padding-top: 60px; /* 给导航栏留出空间 */
