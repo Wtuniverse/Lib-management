@@ -36,7 +36,6 @@ export default defineComponent({
   right: 0;
   bottom: 0;
   left: 0;
-  height: 100%;
   width: 100%;}
 .content {
   padding-top: 60px; /* 给导航栏留出空间 */
