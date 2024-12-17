@@ -36,7 +36,7 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-image: linear-gradient( 135deg, #A0FE65 10%, #FA016D 100%);
+  background: url('../assets/cool-background.png') no-repeat center center;
   background-size: cover;
   position: absolute;
 }
