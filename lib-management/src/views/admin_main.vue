@@ -1,6 +1,6 @@
 <template>
  <div class="admin_container">
-  <div id="app"class="nav">
+  <div class="nav">
     <admins_header />
   </div>
   <div class="content">
@@ -37,7 +37,11 @@ export default defineComponent({
   right: 0;
   bottom: 0;
   left: 0;
-  width: 100%;}
+  width: 100%;
+  background: url('..\assets\cool-background.png') no-repeat center center;
+  background-size: cover;
+  position: absolute;
+}
 .content {
   padding-top: 60px; /* 给导航栏留出空间 */
   display: flex; /* 启用flexbox布局 */
@@ -45,7 +49,7 @@ export default defineComponent({
   align-items: center; /* 垂直居中 */
   min-height: 100vh; /* 确保内容区域至少填满视口 */
   text-align: center; /* 使文本水平居中 */
-  width: 100%
+  width: 100%;
 }
 
 .nav {
@@ -56,7 +60,7 @@ export default defineComponent({
   padding: 0 20px; /* 内边距 */
   position: fixed; /* 固定在页面顶部 */
   top: 0; /* 距离页面顶部为0 */
-  width: 1707px;
+  width: 100%;
   z-index: 1000; /* 确保导航栏位于页面其他内容之上 */
 }
 </style>

@@ -96,13 +96,23 @@ onMounted(() => {
 <style>
 .menu-container {
   display: flex;
-  justify-content: space-between; /* 水平居中 */
+  justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
-  width: 1707px;
+  width: 100%; /* 让容器占满整个宽度 */
 }
 
 .el-menu-demo {
-  width: 100%; /* 让菜单占满整个宽度 */
+  display: flex; /* 使用 Flexbox 进行布局 */
+  justify-content: center; /* 水平居中整个菜单 */
+  width: 100%; /* 让菜单宽度为100% */
+}
+
+.el-menu-demo > * {
+  margin: 0 10px; /* 给每个项目添加水平间距 */
+}
+
+.el-menu-item {
+  text-align: center; /* 使单个菜单项的文本居中 */
 }
 
 .el-menu--horizontal {
@@ -118,8 +128,5 @@ onMounted(() => {
   margin: 0 15px; /* 增加子菜单项之间的间距 */
 }
 
-.el-menu-item {
-  width: 200px;
-  white-space: nowrap; /* 防止菜单项换行 */
-}
+
 </style>
