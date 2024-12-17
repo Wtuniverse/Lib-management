@@ -35,14 +35,7 @@
       <template #title>Log Out</template>
     </el-menu-item>
   </el-menu>
-  <div class="iframe-container">
-      <iframe
-        src="https://www.widgets.link/#/sentence?fz=17&fc=1A3B32FF&bg=&p=15&t=&s=true&br=5&_b=true&bs=true&bpc=ffffff&as=14&aa=right"
-        width="500"
-        height="200"
-        frameborder="0">
-      </iframe>
-    </div>
+
 </div>
 </template>
 
@@ -132,10 +125,5 @@ const logout = () => {
   margin: 0 15px; /* 增加子菜单项之间的间距 */
 }
 
-.iframe-container {
-  position: fixed; /* 使用固定定位 */
-  bottom: 20px; /* 距离页面底部20px */
-  right: 20px; /* 距离页面右侧20px */
-  z-index: 1000; /* 确保在其他内容之上 */
-}
+
 </style>
