@@ -133,7 +133,7 @@ export default {
   left: 0;
   height: 100%;
   width: 100%;
-  background: url('../assets/cool-background1.png') no-repeat center center;
+  background: url('../assets/cool-background3.png') no-repeat center center;
   background-size: cover;
 }
 .login-content {

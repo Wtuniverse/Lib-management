@@ -36,7 +36,7 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: url('../assets/cool-background.png') no-repeat center center;
+  background: url('../assets/cool-background4.png') no-repeat center center;
   background-size: cover;
   position: absolute;
 }
