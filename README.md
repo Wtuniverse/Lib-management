@@ -49,3 +49,10 @@ npm run dev
 cd .\control\
 node server.js
 ```
+
+
+#### If you can not install the dependency correctly, you can try the following commands.
+
+```bash
+npm cache clean --force
+```
